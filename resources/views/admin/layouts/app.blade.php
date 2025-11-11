@@ -27,7 +27,7 @@
 		</div>
 	</div>
 
-	<script src="{{ asset('admin/js/app.js') }}"></script>
+	<script src="{{ asset('adminkit/js/app.js') }}"></script>
 	@yield('scripts')
 </body>
 </html>

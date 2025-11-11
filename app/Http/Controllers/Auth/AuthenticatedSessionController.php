@@ -30,24 +30,42 @@ public function store(Request $request): RedirectResponse
         'password' => ['required'],
     ]);
 
-    if (Auth::attempt($credentials, $request->boolean('remember'))) {
-        $request->session()->regenerate();
+    // ✅ Get user by email
+    $user = \App\Models\User::where('email', $request->email)->first();
 
-        $user = Auth::user();
+    // ❌ If no user or wrong password
+    if (! $user || ! \Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
+    }
 
-        if ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard');
-        } elseif ($user->role === 'employer') {
-            return redirect()->route('employer.dashboard');
-        } else {
-            return redirect()->route('employee.dashboard');
+    // 🟡 Check employer approval status
+    if ($user->role === 'employer') {
+        $employer = \App\Models\Employer::where('user_id', $user->id)->first();
+
+        if ($employer && $employer->verified == 0) {
+            return back()->with('error', '⚠️ Your account is pending admin approval.');
+        }
+
+        if ($employer && $employer->verified == 2) {
+            return back()->with('error', '❌ Your registration has been rejected.');
         }
     }
 
-    return back()->withErrors([
-        'email' => 'The provided credentials do not match our records.',
-    ])->onlyInput('email');
+    // ✅ Passed checks, proceed with login
+    \Illuminate\Support\Facades\Auth::login($user, $request->boolean('remember'));
+    $request->session()->regenerate();
+
+    if ($user->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    } elseif ($user->role === 'employer') {
+        return redirect()->route('employer.dashboard');
+    } else {
+        return redirect()->route('employee.dashboard');
+    }
 }
+
 
 
     /**

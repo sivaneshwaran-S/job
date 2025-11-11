@@ -16,6 +16,15 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 });
 
+Route::get('/employer/dashboard', function () {
+    return view('employer.dashboard');
+})->name('employer.dashboard');
+
+Route::get('/employee/dashboard', function () {
+    return view('employee.dashboard');
+})->name('employee.dashboard');
+
+
 Route::get('/admin/jobs/{id}/applicants', [AdminController::class, 'viewApplicants'])
     ->name('admin.jobs.applicants');
 
