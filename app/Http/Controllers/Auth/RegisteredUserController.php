@@ -68,8 +68,6 @@ class RegisteredUserController extends Controller
 
     // 3️⃣ Trigger events + login
     event(new Registered($user));
-    Auth::login($user);
-
-    return redirect()->route('dashboard');
+   return redirect()->route('registration.pending');
 }
 }

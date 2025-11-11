@@ -20,19 +20,20 @@ class Employee extends Model
         'preferred_location',
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+public function user()
+{
+    return $this->belongsTo(\App\Models\User::class, 'user_id');
+}
 
-    // For later: employee has many applications and reviews
-    public function applications()
-    {
-        return $this->hasMany(Application::class);
-    }
 
-    public function reviews()
-    {
-        return $this->hasMany(Review::class);
-    }
+public function applications()
+{
+    return $this->hasMany(JobApplication::class, 'employee_id');
+}
+
+
+    // public function reviews()
+    // {
+    //     return $this->hasMany(Review::class);
+    // }
 }

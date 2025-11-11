@@ -35,7 +35,6 @@ public function store(Request $request): RedirectResponse
 
         $user = Auth::user();
 
-        // ✅ Redirect according to user role
         if ($user->role === 'admin') {
             return redirect()->route('admin.dashboard');
         } elseif ($user->role === 'employer') {
