@@ -47,12 +47,31 @@
             <x-input-error :messages="$errors->get('role')" class="mt-2" />
         </div>
 
-        <!-- Company Name (Visible only if Employer) -->
-        <div id="company_name_field" class="mt-4 hidden">
-            <x-input-label for="company_name" :value="__('Company Name')" />
-            <x-text-input id="company_name" class="block mt-1 w-full" type="text" name="company_name"
-                :value="old('company_name')" />
-            <x-input-error :messages="$errors->get('company_name')" class="mt-2" />
+        <!-- Employer Extra Fields -->
+        <div id="employer_fields" class="hidden">
+            <!-- Company Name -->
+            <div class="mt-4">
+                <x-input-label for="company_name" :value="__('Company Name')" />
+                <x-text-input id="company_name" class="block mt-1 w-full" type="text" name="company_name"
+                    :value="old('company_name')" />
+                <x-input-error :messages="$errors->get('company_name')" class="mt-2" />
+            </div>
+
+            <!-- Website URL -->
+            <div class="mt-4">
+                <x-input-label for="website" :value="__('Website URL')" />
+                <x-text-input id="website" class="block mt-1 w-full" type="url" name="website"
+                    :value="old('website')" placeholder="https://example.com" />
+                <x-input-error :messages="$errors->get('website')" class="mt-2" />
+            </div>
+
+            <!-- Address -->
+            <div class="mt-4">
+                <x-input-label for="address" :value="__('Company Address')" />
+                <x-text-input id="address" class="block mt-1 w-full" type="text" name="address"
+                    :value="old('address')" placeholder="Street, City, State" />
+                <x-input-error :messages="$errors->get('address')" class="mt-2" />
+            </div>
         </div>
 
         <!-- Password -->
@@ -84,15 +103,11 @@
         </div>
     </form>
 
-    <!-- Simple JS to toggle company name field -->
+    <!-- JS to toggle Employer fields -->
     <script>
         document.getElementById('role').addEventListener('change', function() {
-            const companyField = document.getElementById('company_name_field');
-            if (this.value === 'employer') {
-                companyField.classList.remove('hidden');
-            } else {
-                companyField.classList.add('hidden');
-            }
+            const employerFields = document.getElementById('employer_fields');
+            employerFields.classList.toggle('hidden', this.value !== 'employer');
         });
     </script>
 </x-guest-layout>

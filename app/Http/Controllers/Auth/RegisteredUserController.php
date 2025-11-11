@@ -29,6 +29,8 @@ class RegisteredUserController extends Controller
         'phone' => ['nullable', 'string', 'max:15'],
         'location' => ['nullable', 'string', 'max:100'],
         'company_name' => ['nullable', 'string', 'max:150'],
+        'website' => ['nullable', 'url', 'max:255'],     // ✅ new field
+        'address' => ['nullable', 'string', 'max:255'],  // ✅ new field
     ]);
 
     // 1️⃣ Create user first
@@ -48,8 +50,8 @@ class RegisteredUserController extends Controller
             'user_id' => $user->id,
             'company_name' => $request->company_name ?? 'Unnamed Company',
             'industry_type' => null,
-            'address' => null,
-            'website' => null,
+            'address' => $request->address,   // ✅ save address
+            'website' => $request->website,   // ✅ save website
             'gst_number' => null,
             'verified' => 0,
         ]);
@@ -66,8 +68,10 @@ class RegisteredUserController extends Controller
         ]);
     }
 
-    // 3️⃣ Trigger events + login
+    // 3️⃣ Trigger events + redirect (not login until approved)
     event(new Registered($user));
-   return redirect()->route('registration.pending');
+
+    return redirect()->route('registration.pending');
 }
+
 }
