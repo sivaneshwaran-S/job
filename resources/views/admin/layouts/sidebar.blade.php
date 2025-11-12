@@ -5,54 +5,46 @@
 		</a>
 
 		<ul class="sidebar-nav">
-			<li class="sidebar-header">Pages</li>
+			<li class="sidebar-header">Admin Panel</li>
 
-			<li class="sidebar-item active">
+			{{-- Dashboard --}}
+			<li class="sidebar-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
 				<a class="sidebar-link" href="{{ route('admin.dashboard') }}">
-					<i class="align-middle" data-feather="sliders"></i> 
+					<i class="align-middle" data-feather="sliders"></i>
 					<span class="align-middle">Dashboard</span>
 				</a>
 			</li>
 
-			<li class="sidebar-item">
-				<a class="sidebar-link" href="#">
-					<i class="align-middle" data-feather="user"></i> 
+			{{-- Profile --}}
+			<li class="sidebar-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+				<a class="sidebar-link" href="{{ route('profile.edit') }}">
+					<i class="align-middle" data-feather="user"></i>
 					<span class="align-middle">Profile</span>
 				</a>
 			</li>
-	<li class="sidebar-item">
-    <a class="sidebar-link" href="{{ route('admin.employers.pending') }}">
-        <i class="align-middle" data-feather="user-x"></i>
-        <span class="align-middle">Pending Employers</span>
-    </a>
-</li>
 
-<li class="sidebar-item">
-    <a class="sidebar-link" href="{{ route('admin.employers.approved') }}">
-        <i class="align-middle" data-feather="user-check"></i>
-        <span class="align-middle">Approved Employers</span>
-    </a>
-</li>
-
-<li class="sidebar-item">
-    <a class="sidebar-link" href="{{ route('admin.employers.rejected') }}">
-        <i class="align-middle" data-feather="user-minus"></i>
-        <span class="align-middle">Rejected Employers</span>
-    </a>
-</li>
-<li class="sidebar-item">
-    <a class="sidebar-link" href="{{ route('admin.employees.index') }}">
+			<li class="sidebar-item {{ request()->routeIs('admin.users.manage') ? 'active' : '' }}">
+    <a class="sidebar-link" href="{{ route('admin.users.manage') }}">
         <i class="align-middle" data-feather="users"></i>
-        <span class="align-middle">Employees</span>
-    </a>
-</li>
-<li class="sidebar-item">
-    <a class="sidebar-link" href="{{ route('admin.jobs.all') }}">
-        <i class="align-middle" data-feather="list"></i>
-        <span class="align-middle">All Job Listings</span>
+        <span class="align-middle">Manage Users</span>
     </a>
 </li>
 
+			{{-- All Job Listings --}}
+			<li class="sidebar-item {{ request()->routeIs('admin.jobs.all') ? 'active' : '' }}">
+				<a class="sidebar-link" href="{{ route('admin.jobs.all') }}">
+					<i class="align-middle" data-feather="list"></i>
+					<span class="align-middle">All Job Listings</span>
+				</a>
+			</li>
 		</ul>
 	</div>
 </nav>
+
+{{-- ✅ Feather Icons Script --}}
+<script src="https://unpkg.com/feather-icons"></script>
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+		feather.replace();
+	});
+</script>

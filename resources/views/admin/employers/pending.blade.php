@@ -56,3 +56,37 @@
     </div>
 </div>
 @endsection
+@if(isset($pendingEmployees) && $pendingEmployees->count())
+    <hr>
+    <h4 class="mt-4">Pending Employees</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Employee Name</th>
+                <th>Email</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($pendingEmployees as $employee)
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $employee->user->name ?? 'N/A' }}</td>
+                    <td>{{ $employee->user->email ?? 'N/A' }}</td>
+                    <td>
+                        <form action="{{ route('admin.employees.approve', $employee->id) }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                        </form>
+                        <form action="{{ route('admin.employees.reject', $employee->id) }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+@endif
+

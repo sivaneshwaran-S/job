@@ -21,6 +21,8 @@
                         <th>Experience</th>
                         <th>Skills</th>
                         <th>Cover Letter</th>
+                        <th>Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,10 +33,29 @@
                             <td>{{ $application->employee->experience_years ?? '-' }} yrs</td>
                             <td>{{ $application->employee->skills ?? '-' }}</td>
                             <td>{{ $application->cover_letter ?? '-' }}</td>
+                            <td>
+                                <span class="badge 
+                                    @if($application->status == 'pending') bg-warning
+                                    @elseif($application->status == 'approved') bg-success
+                                    @else bg-secondary
+                                    @endif">
+                                    {{ ucfirst($application->status) }}
+                                </span>
+                            </td>
+                            <td>
+                                @if($application->status == 'pending')
+                                    <form action="{{ route('admin.applicants.approve', $application->id) }}" method="POST" onsubmit="return confirm('Approve this applicant?');">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                    </form>
+                                @else
+                                    <button class="btn btn-sm btn-secondary" disabled>Approved</button>
+                                @endif
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center">No applicants yet.</td>
+                            <td colspan="7" class="text-center">No applicants yet.</td>
                         </tr>
                     @endforelse
                 </tbody>

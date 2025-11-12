@@ -1,59 +1,58 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EmployerController;
+use App\Http\Controllers\Employer\JobController;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/', function () {
     return view('welcome');
 });
 
+// 🧩 COMMON DASHBOARD (default Laravel)
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware(['auth', 'is_admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-});
+// 🧑‍💼 EMPLOYER ROUTES
+Route::middleware(['auth', 'role:employer'])
+    ->prefix('employer')
+    ->name('employer.')
+    ->group(function () {
+        Route::get('/dashboard', [EmployerController::class, 'index'])->name('dashboard');
+        Route::resource('jobs', JobController::class);
+    });
 
-Route::get('/employer/dashboard', function () {
-    return view('employer.dashboard');
-})->name('employer.dashboard');
+// 🧩 ADMIN ROUTES
+Route::middleware(['auth', 'is_admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
-Route::get('/employee/dashboard', function () {
-    return view('employee.dashboard');
-})->name('employee.dashboard');
+        // 👥 User Management
+        Route::get('/users/manage', [AdminController::class, 'manageUsers'])->name('users.manage');
+        Route::post('/users/{id}/approve', [AdminController::class, 'approveUser'])->name('users.approve');
+        Route::post('/users/{id}/reject', [AdminController::class, 'rejectUser'])->name('users.reject');
 
+        // 💼 Job Management
+        Route::get('/jobs', [AdminController::class, 'allJobs'])->name('jobs.all');
+        Route::get('/jobs/{id}/applicants', [AdminController::class, 'viewApplicants'])->name('jobs.applicants');
+        Route::post('/applicants/{id}/approve', [AdminController::class, 'approveApplicant'])->name('applicants.approve');
+    });
 
-Route::get('/admin/jobs/{id}/applicants', [AdminController::class, 'viewApplicants'])
-    ->name('admin.jobs.applicants');
+// 🕓 Registration pending page
+Route::get('/registration/pending', fn() => view('auth.registration-pending'))
+    ->name('registration.pending');
 
-Route::get('/registration/pending', function () {
-    return view('auth.registration-pending');
-})->name('registration.pending');
-
-
-Route::middleware(['auth', 'is_admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-
-    // Employer management
-    Route::get('/admin/employers/pending', [AdminController::class, 'pendingEmployers'])->name('admin.employers.pending');
-    Route::get('/admin/employers/approved', [AdminController::class, 'approvedEmployers'])->name('admin.employers.approved');
-    Route::get('/admin/employers/rejected', [AdminController::class, 'rejectedEmployers'])->name('admin.employers.rejected');
-    Route::post('/admin/employers/{id}/approve', [AdminController::class, 'approveEmployer'])->name('admin.employers.approve');
-    Route::post('/admin/employers/{id}/reject', [AdminController::class, 'rejectEmployer'])->name('admin.employers.reject');
-
-    // ✅ Employee management
-    Route::get('/admin/employees', [AdminController::class, 'employees'])->name('admin.employees.index');
-    Route::get('/admin/employees/pending', [AdminController::class, 'pendingEmployees'])->name('admin.employees.pending');
-    Route::post('/admin/employees/{id}/approve', [AdminController::class, 'approveEmployee'])->name('admin.employees.approve');
-    Route::post('/admin/employees/{id}/reject', [AdminController::class, 'rejectEmployee'])->name('admin.employees.reject');
-});
-
-
-Route::get('/admin/jobs', [AdminController::class, 'allJobs'])->name('admin.jobs.all');
-
-
+// 🧍 PROFILE ROUTES
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

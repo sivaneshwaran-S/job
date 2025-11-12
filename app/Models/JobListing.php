@@ -33,4 +33,15 @@ class JobListing extends Model
     {
         return $this->hasMany(JobApplication::class, 'job_id');
     }
+    public function interviews()
+    {
+        return $this->hasManyThrough(
+            Interview::class,
+            JobApplication::class,
+            'job_id',          // Foreign key on job_applications
+            'application_id',  // Foreign key on interviews
+            'id',              // Local key on job_listings
+            'id'               // Local key on job_applications
+        );
+    }
 }

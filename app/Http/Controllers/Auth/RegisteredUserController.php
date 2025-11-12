@@ -19,7 +19,7 @@ class RegisteredUserController extends Controller
         return view('auth.register');
     }
 
-   public function store(Request $request): RedirectResponse
+ public function store(Request $request): RedirectResponse
 {
     $request->validate([
         'name' => ['required', 'string', 'max:100'],
@@ -29,11 +29,11 @@ class RegisteredUserController extends Controller
         'phone' => ['nullable', 'string', 'max:15'],
         'location' => ['nullable', 'string', 'max:100'],
         'company_name' => ['nullable', 'string', 'max:150'],
-        'website' => ['nullable', 'url', 'max:255'],     // ✅ new field
-        'address' => ['nullable', 'string', 'max:255'],  // ✅ new field
+        'website' => ['nullable', 'url', 'max:255'],
+        'address' => ['nullable', 'string', 'max:255'],
     ]);
 
-    // 1️⃣ Create user first
+    // 1️⃣ Create user with pending status
     $user = User::create([
         'name' => $request->name,
         'email' => $request->email,
@@ -41,17 +41,17 @@ class RegisteredUserController extends Controller
         'role' => $request->role,
         'phone' => $request->phone,
         'location' => $request->location,
-        'status' => 1,
+        'status' => 'pending', // 👈 fixed
     ]);
 
-    // 2️⃣ Create related record
+    // 2️⃣ Related record
     if ($request->role === 'employer') {
         \App\Models\Employer::create([
             'user_id' => $user->id,
             'company_name' => $request->company_name ?? 'Unnamed Company',
             'industry_type' => null,
-            'address' => $request->address,   // ✅ save address
-            'website' => $request->website,   // ✅ save website
+            'address' => $request->address,
+            'website' => $request->website,
             'gst_number' => null,
             'verified' => 0,
         ]);
@@ -68,7 +68,7 @@ class RegisteredUserController extends Controller
         ]);
     }
 
-    // 3️⃣ Trigger events + redirect (not login until approved)
+    // 3️⃣ Event + redirect
     event(new Registered($user));
 
     return redirect()->route('registration.pending');

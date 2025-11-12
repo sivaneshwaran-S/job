@@ -19,7 +19,8 @@ return new class extends Migration
             $table->enum('role', ['employee', 'employer', 'admin'])->default('employee'); // User type
             $table->string('phone', 15)->nullable(); // Contact number
             $table->string('location', 100)->nullable(); // City/District
-            $table->tinyInteger('status')->default(1); // 1 = Active, 0 = Inactive
+           $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+
 
             // Laravel built-in fields
             $table->timestamp('email_verified_at')->nullable();

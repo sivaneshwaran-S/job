@@ -5,78 +5,82 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\JobListing;
-use App\Models\Employer;
+use App\Models\JobApplication;
 
 class AdminController extends Controller
 {
-    public function dashboard()
-    {
-        $employers = User::where('role', 'employer')->count();
-        $employees = User::where('role', 'employee')->count();
-        $jobs = \App\Models\JobListing::count();
-
-        return view('admin.dashboard', compact('employers', 'employees', 'jobs'));
-    }
-
-    // 🟡 1️⃣ Show Pending Employers
-    public function pendingEmployers()
-    {
-        $employers = Employer::where('verified', 0)->get();
-        return view('admin.employers.pending', compact('employers'));
-    }
-
-    // 🟢 2️⃣ Show Approved Employers
-    public function approvedEmployers()
-    {
-        $employers = Employer::where('verified', 1)->get();
-        return view('admin.employers.approved', compact('employers'));
-    }
-
-    // 🔴 3️⃣ Show Rejected Employers
-    public function rejectedEmployers()
-    {
-        $employers = Employer::where('verified', 2)->get();
-        return view('admin.employers.rejected', compact('employers'));
-    }
-
-    // ✅ 4️⃣ Approve Employer
-    public function approveEmployer($id)
-    {
-        $employer = Employer::findOrFail($id);
-        $employer->update(['verified' => 1]);
-
-        return redirect()->route('admin.employers.pending')->with('success', 'Employer approved successfully!');
-    }
-
-    // ❌ 5️⃣ Reject Employer
-    public function rejectEmployer($id)
-    {
-        $employer = Employer::findOrFail($id);
-        $employer->update(['verified' => 2]);
-
-        return redirect()->route('admin.employers.pending')->with('error', 'Employer rejected.');
-    }
-    public function employees()
+    // 🏠 Dashboard
+   public function dashboard()
 {
-    $employees = \App\Models\User::where('role', 'employee')->get();
-    return view('admin.employees.index', compact('employees'));
-}
-public function allJobs()
-{
-    $jobs = \App\Models\JobListing::with('employer')->latest()->get();
-    return view('admin.jobs.all', compact('jobs'));
-}
-public function viewApplicants($id)
-{
-    $job = \App\Models\JobListing::with([
-        'employer.user',
-        'applications.employee.user'
-    ])->findOrFail($id);
+    $totalEmployers = User::where('role', 'employer')
+        ->where('status', 'approved')
+        ->count();
 
-    return view('admin.jobs.applicants', compact('job'));
+    $totalEmployees = User::where('role', 'employee')
+        ->where('status', 'approved')
+        ->count();
+
+    $totalJobs = JobListing::count();
+
+    return view('admin.dashboard', [
+        'employers' => $totalEmployers,
+        'employees' => $totalEmployees,
+        'jobs' => $totalJobs,
+    ]);
 }
 
+public function manageUsers(Request $request)
+{
+    $status = $request->input('status');
+    $query = User::whereIn('role', ['employer', 'employee']);
 
+    if ($status) {
+        $query->where('status', $status);
+    }
 
+    $users = $query->latest()->get();
 
+    return view('admin.users.manage', compact('users', 'status'));
+}
+
+  // ✅ Approve User
+public function approveUser($id)
+{
+    $user = User::findOrFail($id);
+    $user->update(['status' => 'approved']);
+
+    return back()->with('success', "{$user->name} has been approved!");
+}
+
+// ❌ Reject User
+public function rejectUser($id)
+{
+    $user = User::findOrFail($id);
+    $user->update(['status' => 'rejected']);
+
+    return back()->with('error', "{$user->name} has been rejected.");
+}
+
+    // 💼 All Jobs
+    public function allJobs()
+    {
+        $jobs = JobListing::with('employer')->latest()->get();
+        return view('admin.jobs.all', compact('jobs'));
+    }
+
+    // 👀 View Job Applicants
+    public function viewApplicants($id)
+    {
+        $job = JobListing::with(['employer.user', 'applications.employee.user'])->findOrFail($id);
+        return view('admin.jobs.applicants', compact('job'));
+    }
+
+    // 🟢 Approve Applicant
+    public function approveApplicant($applicationId)
+    {
+        $application = JobApplication::findOrFail($applicationId);
+        $application->update(['status' => 'approved']);
+
+        return back()->with('success', 'Applicant approved successfully!');
+    }
 }

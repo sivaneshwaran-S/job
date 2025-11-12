@@ -13,11 +13,10 @@
                     <tr>
                         <th>ID</th>
                         <th>Title</th>
-                        <th>Employer</th>
+                        <th>company_name</th>
                         <th>Location</th>
                         <th>Salary Range</th>
                         <th>Status</th>
-                        <th>Approved</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -30,13 +29,6 @@
                             <td>{{ $job->location }}</td>
                             <td>₹{{ $job->salary_min }} - ₹{{ $job->salary_max }}</td>
                             <td>{{ ucfirst($job->status) }}</td>
-                            <td>
-                                @if($job->is_approved)
-                                    <span class="badge bg-success">Approved</span>
-                                @else
-                                    <span class="badge bg-warning text-dark">Pending</span>
-                                @endif
-                            </td>
                             <td>
                                 <a href="{{ route('admin.jobs.applicants', $job->id) }}" 
                                    class="btn btn-sm btn-primary">
