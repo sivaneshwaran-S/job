@@ -2,12 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\JobListing;
-use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 
-class Employer extends Authenticatable
+class Employer extends Model
 {
     use HasFactory;
 
@@ -21,19 +19,13 @@ class Employer extends Authenticatable
         'verified',
     ];
 
-    /**
-     * Relationship: An employer belongs to one user.
-     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Relationship: An employer can post many jobs.
-     */
     public function jobs()
     {
-        return $this->hasMany(JobListing::class);
+        return $this->hasMany(Job::class);
     }
 }

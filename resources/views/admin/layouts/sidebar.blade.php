@@ -1,50 +1,95 @@
-<nav id="sidebar" class="sidebar js-sidebar">
-	<div class="sidebar-content js-simplebar">
-		<a class="sidebar-brand" href="{{ route('admin.dashboard') }}">
-			<span class="align-middle">AdminKit</span>
+	<nav id="sidebar" class="sidebar js-sidebar">
+		<div class="sidebar-content js-simplebar">
+			<a class="sidebar-brand" href="{{ route('dashboard') }}">
+				<span class="align-middle">Job Portal</span>
+			</a>
+
+			<ul class="sidebar-nav">
+
+				{{-- 🔹 Common Links for All Users --}}
+				<li class="sidebar-header">Main</li>
+
+				<li class="sidebar-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+					<a class="sidebar-link" href="{{ route('dashboard') }}">
+						<i class="align-middle" data-feather="sliders"></i>
+						<span class="align-middle">Dashboard</span>
+					</a>
+				</li>
+
+				<li class="sidebar-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+					<a class="sidebar-link" href="{{ route('profile.edit') }}">
+						<i class="align-middle" data-feather="user"></i>
+						<span class="align-middle">Profile</span>
+					</a>
+				</li>
+
+				{{-- 🔹 ADMIN LINKS --}}
+				@if(Auth::user()->role === 'admin')
+					<li class="sidebar-header">Admin Panel</li>
+
+					<li class="sidebar-item {{ request()->routeIs('admin.users.manage') ? 'active' : '' }}">
+						<a class="sidebar-link" href="{{ route('admin.users.manage') }}">
+							<i class="align-middle" data-feather="users"></i>
+							<span class="align-middle">Manage Users</span>
+						</a>
+					</li>
+
+					<li class="sidebar-item {{ request()->routeIs('admin.jobs.all') ? 'active' : '' }}">
+						<a class="sidebar-link" href="{{ route('admin.jobs.all') }}">
+							<i class="align-middle" data-feather="list"></i>
+							<span class="align-middle">All Job Listings</span>
+						</a>
+					</li>
+				@endif
+
+				{{-- 🔹 EMPLOYER LINKS --}}
+				@if(Auth::user()->role === 'employer')
+					<li class="sidebar-header">Employer Panel</li>
+
+					<li class="sidebar-item {{ request()->routeIs('employer.jobs.*') ? 'active' : '' }}">
+		<a class="sidebar-link" href="{{ route('employer.jobs.index') }}">
+			<i class="align-middle" data-feather="briefcase"></i>
+			<span class="align-middle">My Job Posts</span>
 		</a>
+	</li>
 
-		<ul class="sidebar-nav">
-			<li class="sidebar-header">Admin Panel</li>
 
-			{{-- Dashboard --}}
-			<li class="sidebar-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-				<a class="sidebar-link" href="{{ route('admin.dashboard') }}">
-					<i class="align-middle" data-feather="sliders"></i>
-					<span class="align-middle">Dashboard</span>
-				</a>
-			</li>
-
-			{{-- Profile --}}
-			<li class="sidebar-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
-				<a class="sidebar-link" href="{{ route('profile.edit') }}">
-					<i class="align-middle" data-feather="user"></i>
-					<span class="align-middle">Profile</span>
-				</a>
-			</li>
-
-			<li class="sidebar-item {{ request()->routeIs('admin.users.manage') ? 'active' : '' }}">
-    <a class="sidebar-link" href="{{ route('admin.users.manage') }}">
+					{{-- ⚠️ Create a route for applicants if not exists --}}
+						<li class="sidebar-item {{ request()->routeIs('employer.applicants.*') ? 'active' : '' }}">
+    <a class="sidebar-link" href="{{ route('employer.applicants.index') }}">
         <i class="align-middle" data-feather="users"></i>
-        <span class="align-middle">Manage Users</span>
+        <span class="align-middle">View Applicants</span>
     </a>
 </li>
+				@endif
 
-			{{-- All Job Listings --}}
-			<li class="sidebar-item {{ request()->routeIs('admin.jobs.all') ? 'active' : '' }}">
-				<a class="sidebar-link" href="{{ route('admin.jobs.all') }}">
-					<i class="align-middle" data-feather="list"></i>
-					<span class="align-middle">All Job Listings</span>
-				</a>
-			</li>
-		</ul>
-	</div>
-</nav>
+				{{-- 🔹 EMPLOYEE LINKS --}}
+				@if(Auth::user()->role === 'employee')
+					<li class="sidebar-header">Employee Panel</li>
 
-{{-- ✅ Feather Icons Script --}}
-<script src="https://unpkg.com/feather-icons"></script>
-<script>
-	document.addEventListener("DOMContentLoaded", function() {
-		feather.replace();
-	});
-</script>
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="#">
+							<i class="align-middle" data-feather="briefcase"></i>
+							<span class="align-middle">Browse Jobs</span>
+						</a>
+					</li>
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="#">
+							<i class="align-middle" data-feather="file"></i>
+							<span class="align-middle">My Applications</span>
+						</a>
+					</li>
+				@endif
+
+			</ul>
+		</div>
+	</nav>
+
+	{{-- ✅ Feather Icons --}}
+	<script src="https://unpkg.com/feather-icons"></script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			feather.replace();
+		});
+	</script>

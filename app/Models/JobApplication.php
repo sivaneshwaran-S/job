@@ -13,26 +13,18 @@ class JobApplication extends Model
         'job_id',
         'employee_id',
         'cover_letter',
+        'status',
     ];
 
+    // ✅ Correct relationship to JobListing model
     public function job()
     {
         return $this->belongsTo(JobListing::class, 'job_id');
     }
-    public function applications()
-{
-    return $this->hasMany(\App\Models\JobApplication::class, 'job_id');
-}
 
-public function employer()
-{
-    return $this->belongsTo(\App\Models\Employer::class, 'employer_id');
-}
-
-
+    // ✅ Relationship to Employee model
     public function employee()
     {
-        return $this->belongsTo(Employee::class, 'employee_id');
+        return $this->belongsTo(User::class, 'employee_id'); // or Employee::class if separate
     }
-
 }

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\JobListing;
 use App\Models\JobApplication;
+use App\Models\Employee;
 
 class AdminController extends Controller
 {
@@ -76,11 +77,33 @@ public function rejectUser($id)
     }
 
     // 🟢 Approve Applicant
-    public function approveApplicant($applicationId)
-    {
-        $application = JobApplication::findOrFail($applicationId);
-        $application->update(['status' => 'approved']);
 
-        return back()->with('success', 'Applicant approved successfully!');
+
+public function approveApplicant($id)
+{
+    // Find the job application by its ID
+    $application = JobApplication::find($id);
+
+    if (!$application) {
+        return redirect()->back()->with('error', 'Application not found.');
     }
+
+    // employee_id in job_applications corresponds to user_id in employees
+    $employee = Employee::where('user_id', $application->employee_id)->first();
+
+    if (!$employee) {
+        return redirect()->back()->with('error', 'Employee not found for user_id: '.$application->employee_id);
+    }
+
+    // ✅ Update status in employees table
+    $employee->status = 'approved';
+    $employee->save();
+
+    // Optional: if you want to update the job_applications table too
+    $application->status = 'approved';
+    $application->save();
+
+    return redirect()->back()->with('success', 'Employee approved successfully!');
+}
+
 }

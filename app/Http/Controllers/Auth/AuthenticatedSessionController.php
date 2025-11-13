@@ -22,7 +22,6 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-
 public function store(Request $request): RedirectResponse
 {
     $credentials = $request->validate([
@@ -30,43 +29,32 @@ public function store(Request $request): RedirectResponse
         'password' => ['required'],
     ]);
 
-    // ✅ Get user by email
     $user = \App\Models\User::where('email', $request->email)->first();
 
-    // ❌ If no user or wrong password
-    if (! $user || ! \Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
+    if (!$user || !\Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ])->onlyInput('email');
     }
 
-    // 🟡 Check employer approval status
-    if ($user->role === 'employer') {
-        $employer = \App\Models\Employer::where('user_id', $user->id)->first();
-
-        if ($employer && $employer->verified == 0) {
+    // 🚫 Block pending or rejected users
+    if (in_array($user->role, ['employer', 'employee'])) {
+        if ($user->status === 'pending') {
             return back()->with('error', '⚠️ Your account is pending admin approval.');
         }
 
-        if ($employer && $employer->verified == 2) {
+        if ($user->status === 'rejected') {
             return back()->with('error', '❌ Your registration has been rejected.');
         }
     }
 
-    // ✅ Passed checks, proceed with login
+    // ✅ Passed all checks — proceed with login
     \Illuminate\Support\Facades\Auth::login($user, $request->boolean('remember'));
     $request->session()->regenerate();
 
-    if ($user->role === 'admin') {
-        return redirect()->route('admin.dashboard');
-    } elseif ($user->role === 'employer') {
-        return redirect()->route('employer.dashboard');
-    } else {
-        return redirect()->route('employee.dashboard');
-    }
+    // 🎯 Redirect to the unified dashboard
+    return redirect()->route('dashboard');
 }
-
-
 
     /**
      * Destroy an authenticated session.
