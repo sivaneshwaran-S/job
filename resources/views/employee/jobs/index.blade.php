@@ -42,13 +42,20 @@
                         <td>{{ ucfirst($job->job_type) }}</td>
                         <td>₹{{ number_format($job->salary_min) }} - ₹{{ number_format($job->salary_max) }}</td>
                         <td class="text-center">
-                            <form action="{{ route('employee.jobs.apply', $job->id) }}" method="POST">
-                                @csrf
-                                <button type="submit" 
-    class="btn btn-primary btn-sm fw-semibold shadow-sm">
-    Apply
-</button>
-                            </form>
+                            @php
+    $employee = auth()->user()->employee ?? null;
+    $applied = $employee ? \App\Models\JobApplication::where('job_id', $job->id)
+                ->where('employee_id', $employee->id)->exists() : false;
+@endphp
+
+@if($applied)
+    <span class="badge bg-success text-white">Applied</span>
+@else
+    <a href="{{ route('employee.jobs.showApplyForm', $job->id) }}" class="btn btn-primary btn-sm fw-semibold shadow-sm">
+        Apply
+    </a>
+@endif
+
                         </td>
                     </tr>
                 @empty

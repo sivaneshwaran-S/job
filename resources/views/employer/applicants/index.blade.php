@@ -1,43 +1,46 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="container mt-4">
-    <h2>Applicants for Your Jobs</h2>
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+    <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
+        Approved Applicants
+    </h2>
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Job Title</th>
-                <th>Applicant</th>
-                <th>Status</th>
-                <th>Applied At</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($applications as $app)
+    {{-- ✅ Flash Message (optional) --}}
+    @if(session('success'))
+        <div class="mb-3 p-3 bg-green-500/20 border border-green-500 text-green-700 rounded-md">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    {{-- ✅ Applicants Table --}}
+    <div class="overflow-x-auto">
+        <table class="min-w-full text-sm text-left border-collapse">
+            <thead class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                 <tr>
-                    <td>{{ $app->job->title ?? 'N/A' }}</td>
-@if ($app->status === 'approved')
-    <td>
-        {{ $app->employee->user->name ?? 'N/A' }} <br>
-        <small>{{ $app->employee->user->email ?? '' }}</small>
-    </td>
-@else
-    <td><em>Hidden (waiting for admin approval)</em></td>
-@endif
-
-
-
-
-                    <td>{{ ucfirst($app->status) }}</td>
-                    <td>{{ $app->created_at->format('d M Y') }}</td>
+                    <th class="p-3">Job Title</th>
+                    <th class="p-3">Applicant Name</th>
+                    <th class="p-3">Email</th>
+                    <th class="p-3">Qualification</th>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="4" class="text-center text-muted">No applications yet.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @forelse($applications as $app)
+                    <tr class="border-b dark:border-gray-700">
+                        <td class="p-3">{{ $app->job->title ?? 'N/A' }}</td>
+                        <td class="p-3">{{ $app->employee->user->name ?? 'N/A' }}</td>
+                        <td class="p-3">{{ $app->employee->user->email ?? 'N/A' }}</td>
+                        <td class="p-3">{{ $app->employee->qualification ?? 'N/A' }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-gray-500 dark:text-gray-400">
+                            No approved applicants found.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 </div>
 @endsection

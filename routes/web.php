@@ -56,6 +56,7 @@ Route::prefix('admin')
     ->middleware(['auth'])
     ->group(function () {
         Route::get('/jobs', [JobBrowseController::class, 'index'])->name('jobs.index');
+        Route::get('/jobs/{id}/apply', [JobBrowseController::class, 'showApplyForm'])->name('jobs.showApplyForm');
         Route::post('/jobs/{id}/apply', [JobBrowseController::class, 'apply'])->name('jobs.apply');
     });
 // 🔹 Registration Pending

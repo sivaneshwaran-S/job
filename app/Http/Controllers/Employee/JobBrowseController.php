@@ -1,53 +1,67 @@
 <?php
-
 namespace App\Http\Controllers\Employee;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\JobListing;
 use App\Models\JobApplication;
 use App\Models\Employee;
-use Illuminate\Http\Request;
 
 class JobBrowseController extends Controller
 {
-    // 🧭 Show available jobs
     public function index()
     {
-        // Only show approved jobs
-        $jobs = JobListing::latest()
-            ->get();
-
+        // show jobs (remove is_approved if you don't have that column)
+        $jobs = JobListing::latest()->get();
         return view('employee.jobs.index', compact('jobs'));
     }
 
-    // 📝 Apply for a job
-    public function apply($id)
+    // show the apply form
+    public function showApplyForm($id)
     {
-        $user = Auth::user();
-        $employee = Employee::where('user_id', $user->id)->first();
+        $job = JobListing::findOrFail($id);
 
+        // ensure user has an employee profile
+        $employee = Employee::where('user_id', Auth::id())->first();
         if (!$employee) {
-            return back()->with('error', 'You must complete your employee profile before applying.');
+            return redirect()->route('profile.edit')->with('error', 'Please complete your profile before applying.');
         }
 
-        // Check if already applied
-        $alreadyApplied = JobApplication::where('job_id', $id)
-            ->where('employee_id', $employee->id)
-            ->exists();
-
-        if ($alreadyApplied) {
-            return back()->with('warning', 'You have already applied for this job.');
+        // optionally block if already applied
+        $already = JobApplication::where('job_id', $id)->where('employee_id', $employee->id)->exists();
+        if ($already) {
+            return redirect()->route('employee.jobs.index')->with('warning', 'You already applied for this job.');
         }
 
-        // Create new application
+        return view('employee.jobs.apply', compact('job'));
+    }
+
+    // handle the form submit
+    public function apply(Request $request, $id)
+    {
+        $request->validate([
+            'cover_letter' => 'required|string|max:2000',
+            // optional fields — adjust rules as needed
+            'skills' => 'nullable|string|max:500',
+            'education' => 'nullable|string|max:255',
+        ]);
+
+        $employee = Employee::where('user_id', Auth::id())->firstOrFail();
+
+        // double-check not already applied
+        $exists = JobApplication::where('job_id', $id)->where('employee_id', $employee->id)->exists();
+        if ($exists) {
+            return redirect()->route('employee.jobs.index')->with('warning', 'You already applied for this job.');
+        }
+
         JobApplication::create([
             'job_id' => $id,
             'employee_id' => $employee->id,
-            'cover_letter' => 'N/A',
-            'status' => 'pending',
+            'cover_letter' => $request->cover_letter,
+            'status' => 'pending', // admin will approve later
         ]);
 
-        return back()->with('success', 'Your application has been submitted successfully.');
+        return redirect()->route('employee.jobs.index')->with('success', 'Application submitted successfully.');
     }
 }
