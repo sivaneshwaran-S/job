@@ -16,15 +16,13 @@ class JobApplication extends Model
         'status',
     ];
 
-    // ✅ Correct relationship to JobListing model
     public function job()
     {
         return $this->belongsTo(JobListing::class, 'job_id');
     }
 
-    // ✅ Relationship to Employee model
     public function employee()
     {
-        return $this->belongsTo(User::class, 'employee_id'); // or Employee::class if separate
+        return $this->belongsTo(Employee::class, 'employee_id');
     }
 }

@@ -1,37 +1,43 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Applicants')
-
 @section('content')
 <div class="container mt-4">
-    <h2 class="mb-4">Applicants for My Jobs</h2>
+    <h2>Applicants for Your Jobs</h2>
 
-    @if($applications->isEmpty())
-        <div class="alert alert-info">No applicants have applied yet.</div>
-    @else
-        <div class="table-responsive">
-            <table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Applicant Name</th>
-            <th>Email</th>
-            <th>Applied For</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach ($applications as $application)
+    <table class="table table-bordered">
+        <thead>
             <tr>
-                <td>{{ $application->employee->name ?? 'N/A' }}</td>
-                <td>{{ $application->employee->email ?? 'N/A' }}</td>
-                <td>{{ $application->job->title ?? 'N/A' }}</td>
-                <td>{{ ucfirst($application->status) }}</td>
+                <th>Job Title</th>
+                <th>Applicant</th>
+                <th>Status</th>
+                <th>Applied At</th>
             </tr>
-        @endforeach
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @forelse ($applications as $app)
+                <tr>
+                    <td>{{ $app->job->title ?? 'N/A' }}</td>
+@if ($app->status === 'approved')
+    <td>
+        {{ $app->employee->user->name ?? 'N/A' }} <br>
+        <small>{{ $app->employee->user->email ?? '' }}</small>
+    </td>
+@else
+    <td><em>Hidden (waiting for admin approval)</em></td>
+@endif
 
-        </div>
-    @endif
+
+
+
+                    <td>{{ ucfirst($app->status) }}</td>
+                    <td>{{ $app->created_at->format('d M Y') }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="4" class="text-center text-muted">No applications yet.</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
 </div>
 @endsection

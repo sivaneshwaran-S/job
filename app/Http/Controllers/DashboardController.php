@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 use App\Models\Employer;
 use App\Models\Employee;
 use App\Models\JobListing;
-use App\Models\Application;
+use App\Models\JobApplication;
 
 class DashboardController extends Controller
 {
@@ -33,7 +32,7 @@ class DashboardController extends Controller
         } 
         elseif ($user->role === 'employee') {
             $employee = Employee::where('user_id', $user->id)->first();
-            $data['applications'] = $employee ? Application::where('employee_id', $employee->id)->count() : 0;
+            $data['applications'] = $employee ? JobApplication::where('employee_id', $employee->id)->count() : 0;
         }
 
         return view('dashboard', compact('user', 'data'));

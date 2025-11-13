@@ -64,23 +64,27 @@
 				@endif
 
 				{{-- 🔹 EMPLOYEE LINKS --}}
-				@if(Auth::user()->role === 'employee')
-					<li class="sidebar-header">Employee Panel</li>
+@if(Auth::user()->role === 'employee')
+    <li class="sidebar-header">Employee Panel</li>
 
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="#">
-							<i class="align-middle" data-feather="briefcase"></i>
-							<span class="align-middle">Browse Jobs</span>
-						</a>
-					</li>
+    {{-- Browse Jobs --}}
+    <li class="sidebar-item {{ request()->routeIs('employee.jobs.*') ? 'active' : '' }}">
+        <a class="sidebar-link" href="{{ route('employee.jobs.index') }}">
+            <i class="align-middle" data-feather="search"></i>
+            <span class="align-middle">Browse Jobs</span>
+        </a>
+    </li>
 
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="#">
-							<i class="align-middle" data-feather="file"></i>
-							<span class="align-middle">My Applications</span>
-						</a>
-					</li>
-				@endif
+  {{-- My Applications --}}
+{{-- <li class="sidebar-item {{ request()->routeIs('employee.applications.*') ? 'active' : '' }}">
+    <a class="sidebar-link" href="{{ route('employee.applications.index') }}">
+        <i class="align-middle" data-feather="file-text"></i>
+        <span class="align-middle">My Applications</span>
+    </a>
+</li> --}}
+
+@endif
+
 
 			</ul>
 		</div>

@@ -7,6 +7,7 @@ use App\Http\Controllers\Employer\JobController;
 use App\Http\Controllers\Employer\ApplicantController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Employee\JobBrowseController;
 
 // 🏠 Landing page
 Route::get('/', fn() => view('welcome'));
@@ -22,6 +23,9 @@ Route::prefix('employer')
     ->group(function () {
         Route::get('/dashboard', [EmployerController::class, 'index'])->name('dashboard');
         Route::get('/applicants', [ApplicantController::class, 'index'])->name('applicants.index');
+        Route::post('/applicants/{id}/approve', [AdminController::class, 'approveApplicant'])->name('admin.applicants.approve');
+Route::post('/applicants/{id}/reject', [AdminController::class, 'rejectApplicant'])->name('admin.applicants.reject');
+
 
         // ✅ This single line handles all job routes (index, create, store, edit, update, destroy)
         Route::resource('jobs', JobController::class);
@@ -47,6 +51,13 @@ Route::prefix('admin')
         Route::post('/applicants/{id}/approve', [AdminController::class, 'approveApplicant'])->name('applicants.approve');
     });
 
+    Route::prefix('employee')
+    ->name('employee.')
+    ->middleware(['auth'])
+    ->group(function () {
+        Route::get('/jobs', [JobBrowseController::class, 'index'])->name('jobs.index');
+        Route::post('/jobs/{id}/apply', [JobBrowseController::class, 'apply'])->name('jobs.apply');
+    });
 // 🔹 Registration Pending
 Route::get('/registration/pending', fn() => view('auth.registration-pending'))
     ->name('registration.pending');

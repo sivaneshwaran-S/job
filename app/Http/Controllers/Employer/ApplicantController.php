@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 
 
 namespace App\Http\Controllers\Employer;
@@ -14,10 +15,13 @@ class ApplicantController extends Controller
     {
         $employerId = Auth::id();
 
+        // Get jobs posted by this employer
         $jobs = JobListing::where('employer_id', $employerId)->pluck('id');
 
-        $applications = JobApplication::with(['job', 'employee'])
+        // Fetch applications with related employee and user data
+        $applications = JobApplication::with(['job', 'employee.user'])
             ->whereIn('job_id', $jobs)
+            ->where('status', 'approved')
             ->latest()
             ->get();
 
