@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployerController;
+use App\Http\Controllers\Employee\EmployeeProfileController;
 use App\Http\Controllers\Employer\JobController;
 use App\Http\Controllers\Employer\ApplicantController;
 use App\Http\Controllers\ProfileController;
@@ -26,6 +27,8 @@ Route::prefix('employer')
         Route::post('/applicants/{id}/approve', [AdminController::class, 'approveApplicant'])->name('admin.applicants.approve');
 Route::post('/applicants/{id}/reject', [AdminController::class, 'rejectApplicant'])->name('admin.applicants.reject');
 
+         Route::get('/profile', [\App\Http\Controllers\Employer\EmployerProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [\App\Http\Controllers\Employer\EmployerProfileController::class, 'update'])->name('profile.update');
 
         // ✅ This single line handles all job routes (index, create, store, edit, update, destroy)
         Route::resource('jobs', JobController::class);
@@ -58,6 +61,9 @@ Route::prefix('admin')
         Route::get('/jobs', [JobBrowseController::class, 'index'])->name('jobs.index');
         Route::get('/jobs/{id}/apply', [JobBrowseController::class, 'showApplyForm'])->name('jobs.showApplyForm');
         Route::post('/jobs/{id}/apply', [JobBrowseController::class, 'apply'])->name('jobs.apply');
+    
+        Route::get('/profile', [EmployeeProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [EmployeeProfileController::class, 'update'])->name('profile.update');
     });
 // 🔹 Registration Pending
 Route::get('/registration/pending', fn() => view('auth.registration-pending'))

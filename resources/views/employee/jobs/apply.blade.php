@@ -22,6 +22,7 @@
             <label class="form-label">Education (optional)</label>
             <input type="text" name="education" value="{{ old('education', auth()->user()->employee->qualification ?? '') }}" class="form-control">
         </div>
+        
 
         <div class="text-end">
             <a href="{{ route('employee.jobs.index') }}" class="btn btn-secondary me-2">Cancel</a>
