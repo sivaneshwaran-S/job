@@ -1,113 +1,186 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
 
-        <!-- Full Name -->
-        <div>
-            <x-input-label for="name" :value="__('Full Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name"
-                :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+<style>
+    body {
+        background: #f4f6f9;
+    }
+
+    .register-wrapper {
+        display: flex;
+        max-width: 500px;
+        width: 100%;
+        margin: 40px auto;
+        background: #fff;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 6px 25px rgba(0,0,0,0.1);
+    }
+
+    /* RIGHT FORM — center everything */
+    .register-container {
+        width: 100%;
+        padding: 40px 35px;
+        display: flex;
+        align-items: center;       /* vertical centering */
+        justify-content: center;   /* horizontal centering of inner form box */
+    }
+
+    /* inner form box to control width of inputs */
+    .register-form-box {
+        width: 100%;
+        max-width: 480px; /* control input width so it's not edge-to-edge */
+    }
+
+    .register-title {
+        font-size: 26px;
+        font-weight: 700;
+        text-align: center;
+        color: #4e73df;
+        margin-bottom: 22px;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 15px;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus {
+        border-color: #4e73df;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(78,115,223,0.12);
+    }
+
+    .btn-register {
+        background: #4e73df;
+        color: #fff;
+        border-radius: 8px;
+        padding: 12px 18px;
+        width: 100%;
+        border: none;
+        font-weight: 700;
+    }
+
+    .btn-register:hover {
+        background: #3b5fd3;
+    }
+
+    .login-link {
+        text-align: center;
+        margin-top: 14px;
+        font-size: 14px;
+    }
+    .login-link a {
+        color: #4e73df;
+        font-weight: 600;
+    }
+
+    /* Responsive: stack and hide image on small screens */
+    @media (max-width: 900px) {
+        .register-img { display: none; }
+        .register-container { width: 100%; padding: 30px 20px; }
+        .register-wrapper { border-radius: 12px; max-width: 95%; }
+    }
+</style>
+
+<div class="register-wrapper">
+
+    <!-- LEFT IMAGE: replace path with your image in public/images/ -->
+    <div class="register-img" style="background-image: url('{{ asset('images/register-side.jpg') }}');"></div>
+
+    <!-- RIGHT FORM -->
+    <div class="register-container">
+        <div class="register-form-box">
+            <div class="register-title">Create Account</div>
+
+            <form method="POST" action="{{ route('register') }}">
+                @csrf
+
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input id="name" type="text" class="form-control" name="name" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input id="email" type="email" class="form-control" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input id="phone" type="text" class="form-control" name="phone">
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input id="location" type="text" class="form-control" name="location">
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Register As</label>
+                    <select id="role" class="form-control" name="role" required>
+                        <option value="">-- Select --</option>
+                        <option value="employee">Job Seeker</option>
+                        <option value="employer">Employer</option>
+                    </select>
+                </div>
+
+                <div id="employer_fields" style="display:none;">
+                    <div class="form-group">
+                        <label for="company_name">Company Name</label>
+                        <input id="company_name" type="text" class="form-control" name="company_name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="website">Website URL</label>
+                        <input id="website" type="url" class="form-control" name="website">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Company Address</label>
+                        <input id="address" type="text" class="form-control" name="address">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input id="password" type="password" class="form-control" name="password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password_confirmation">Confirm Password</label>
+                    <input id="password_confirmation" type="password" class="form-control" name="password_confirmation" required>
+                </div>
+
+                <button type="submit" class="btn-register">Register</button>
+
+                <div class="login-link">
+                    Already registered? <a href="{{ route('login') }}">Login</a>
+                </div>
+            </form>
         </div>
+    </div>
+</div>
 
-        <!-- Email -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email Address')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email"
-                :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+<script>
+    // toggle employer fields
+    document.getElementById('role').addEventListener('change', function() {
+        document.getElementById('employer_fields').style.display =
+            this.value === 'employer' ? 'block' : 'none';
+    });
+</script>
 
-        <!-- Contact Number -->
-        <div class="mt-4">
-            <x-input-label for="phone" :value="__('Contact Number')" />
-            <x-text-input id="phone" class="block mt-1 w-full" type="text" name="phone"
-                :value="old('phone')" required />
-            <x-input-error :messages="$errors->get('phone')" class="mt-2" />
-        </div>
-
-        <!-- Location -->
-        <div class="mt-4">
-            <x-input-label for="location" :value="__('Location')" />
-            <x-text-input id="location" class="block mt-1 w-full" type="text" name="location"
-                :value="old('location')" required />
-            <x-input-error :messages="$errors->get('location')" class="mt-2" />
-        </div>
-
-        <!-- User Type -->
-        <div class="mt-4">
-            <x-input-label for="role" :value="__('Register As')" />
-            <select id="role" name="role"
-                class="block mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                required>
-                <option value="">-- Select User Type --</option>
-                <option value="employee">Job Seeker</option>
-                <option value="employer">Employer</option>
-            </select>
-            <x-input-error :messages="$errors->get('role')" class="mt-2" />
-        </div>
-
-        <!-- Employer Extra Fields -->
-        <div id="employer_fields" class="hidden">
-            <!-- Company Name -->
-            <div class="mt-4">
-                <x-input-label for="company_name" :value="__('Company Name')" />
-                <x-text-input id="company_name" class="block mt-1 w-full" type="text" name="company_name"
-                    :value="old('company_name')" />
-                <x-input-error :messages="$errors->get('company_name')" class="mt-2" />
-            </div>
-
-            <!-- Website URL -->
-            <div class="mt-4">
-                <x-input-label for="website" :value="__('Website URL')" />
-                <x-text-input id="website" class="block mt-1 w-full" type="url" name="website"
-                    :value="old('website')" placeholder="https://example.com" />
-                <x-input-error :messages="$errors->get('website')" class="mt-2" />
-            </div>
-
-            <!-- Address -->
-            <div class="mt-4">
-                <x-input-label for="address" :value="__('Company Address')" />
-                <x-text-input id="address" class="block mt-1 w-full" type="text" name="address"
-                    :value="old('address')" placeholder="Street, City, State" />
-                <x-input-error :messages="$errors->get('address')" class="mt-2" />
-            </div>
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password"
-                required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-            <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password"
-                name="password_confirmation" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <!-- Buttons -->
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
-                href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-
-    <!-- JS to toggle Employer fields -->
-    <script>
-        document.getElementById('role').addEventListener('change', function() {
-            const employerFields = document.getElementById('employer_fields');
-            employerFields.classList.toggle('hidden', this.value !== 'employer');
-        });
-    </script>
 </x-guest-layout>

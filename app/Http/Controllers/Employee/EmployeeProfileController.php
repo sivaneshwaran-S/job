@@ -23,29 +23,57 @@ class EmployeeProfileController extends Controller
         return view('employee.profile.edit', compact('employee'));
     }
 
-    public function update(Request $request)
-    {
-        $request->validate([
-            'gender' => 'nullable|string|max:10',
-            'dob' => 'nullable|date',
-            'qualification' => 'nullable|string|max:255',
-            'experience_years' => 'nullable|string|max:255',
-            'skills' => 'nullable|string|max:500',
-            'preferred_location' => 'nullable|string|max:255',
-            'resume_file' => 'nullable|mimes:pdf,doc,docx|max:2048',
-        ]);
+  public function update(Request $request)
+{
+    $request->validate([
+        'gender' => 'nullable|string|max:10',
+        'dob' => 'nullable|date',
+        'qualification' => 'nullable|string|max:255',
+        'experience_years' => 'nullable|string|max:255',
+        'skills' => 'nullable|string|max:500',
+        'preferred_location' => 'nullable|string|max:255',
 
-        $employee = Employee::where('user_id', Auth::id())->firstOrFail();
+        // ⭐ ONLY PDF allowed
+        'resume_file' => 'nullable|mimes:pdf|max:2048',
+    ]);
 
-        // Handle resume upload
-        if ($request->hasFile('resume_file')) {
-            $resumePath = $request->file('resume_file')->store('resumes', 'public');
-            $employee->resume_file = $resumePath;
+    $employee = Employee::where('user_id', Auth::id())->firstOrFail();
+
+    // Fill all basic fields
+    $employee->fill($request->except('resume_file'));
+
+    // ⭐ Upload resume with auto-renamed filename
+    if ($request->hasFile('resume_file')) {
+
+        // Delete old file
+        if ($employee->resume_file && file_exists(storage_path("app/public/{$employee->resume_file}"))) {
+            unlink(storage_path("app/public/{$employee->resume_file}"));
         }
 
-        $employee->update($request->except('resume_file'));
-        $employee->save();
+        // Auto rename: resume_userID_timestamp.pdf
+        $newName = 'resume_' . Auth::id() . '_' . time() . '.' . $request->resume_file->extension();
 
-        return redirect()->route('employee.profile.edit')->with('success', 'Profile updated successfully!');
+        $path = $request->resume_file->storeAs('resumes', $newName, 'public');
+        $employee->resume_file = $path;
     }
+
+    $employee->save();
+
+    return back()->with('success', 'Profile updated successfully!');
+}
+
+public function deleteResume()
+{
+    $employee = Employee::where('user_id', Auth::id())->firstOrFail();
+
+    if ($employee->resume_file && file_exists(storage_path("app/public/{$employee->resume_file}"))) {
+        unlink(storage_path("app/public/{$employee->resume_file}"));
+    }
+
+    $employee->resume_file = null;
+    $employee->save();
+
+    return back()->with('success', 'Resume deleted successfully.');
+}
+
 }

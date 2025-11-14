@@ -29,6 +29,7 @@
                 <label class="form-label">Password (leave blank if not changing)</label>
                 <input type="password" name="password" class="form-control">
             </div>
+            
 
             <button type="submit" class="btn btn-primary">Update Profile</button>
         </form>
