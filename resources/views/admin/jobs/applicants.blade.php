@@ -11,8 +11,8 @@
         <p><strong>Location:</strong> {{ $job->location }}</p>
     </div>
 
-    <div class="card">
-        <div class="card-body">
+    <div class="card-body">
+        <div class="table-responsive">
             <table class="table table-bordered align-middle">
                 <thead>
                     <tr>

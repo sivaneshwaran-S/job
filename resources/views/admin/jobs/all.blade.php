@@ -6,9 +6,9 @@
 <div class="container-fluid p-0">
     <h1 class="h3 mb-3"><strong>All</strong> Job Listings</h1>
 
-    <div class="card">
-        <div class="card-body">
-            <table class="table table-bordered align-middle">
+    <div class="card-body">
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle">
                 <thead>
                     <tr>
                         <th>ID</th>

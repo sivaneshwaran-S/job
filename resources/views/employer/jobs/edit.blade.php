@@ -41,7 +41,6 @@
                     <input type="text" name="location" value="{{ old('location', $job->location) }}" class="form-control" required>
                 </div>
 
-                {{-- Job Type Dropdown --}}
                 <div class="mb-3">
                     <label class="form-label">Job Type</label>
                     <select name="job_type" class="form-control" required>
@@ -64,7 +63,6 @@
                     </div>
                 </div>
 
-                {{-- Status Dropdown --}}
                 <div class="mb-3">
                     <label class="form-label">Status</label>
                     <select name="status" class="form-control">
