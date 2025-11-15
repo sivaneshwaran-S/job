@@ -2,176 +2,222 @@
 
 @section('content')
 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
 <style>
-/* Smooth appear */
-.fade-up {
-    animation: fadeUp .45s ease-out both;
-}
-@keyframes fadeUp {
-    from {opacity:0; transform:translateY(12px);}
-    to {opacity:1; transform:translateY(0);}
-}
+    body {
+        background: #f5f6fa !important;
+    }
 
-/* Ultra-premium card */
-.job-card {
-    background: #fff;
-    border-radius: 12px;
-    border: 1px solid #e8ecf3;
-    padding: 28px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.05);
-    transition: .25s ease;
-}
-.job-card:hover {
-    box-shadow: 0 10px 28px rgba(0,0,0,0.08);
-    transform: translateY(-3px);
-}
+    /* FILTER BOX */
+    .filter-box {
+        background: #ffffff;
+        border: 1px solid #e9ecef;
+        border-radius: 14px;
+        padding: 18px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        transition: .25s;
+    }
+    .filter-box:hover {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
 
-/* Table */
-.table-p {
-    border-collapse: separate;
-    border-spacing: 0 10px;
-}
-.table-p thead tr th {
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: .6px;
-    color: #6b7280;
-    padding-bottom: 12px;
-}
-.table-p tbody tr {
-    background: #fdfdfd;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-    transition: .25s;
-}
-.table-p tbody tr:hover {
-    background: #f8faff;
-    transform: scale(1.01);
-}
-.table-p td {
-    padding: 16px 18px !important;
-    font-size: 15px;
-}
+    /* JOB CARD */
+    .premium-card {
+        border-radius: 18px;
+        background: #ffffff;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        transition: all .25s ease;
+        border: 1px solid #e9ecef;
+    }
+    .premium-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 35px rgba(0,0,0,0.10);
+    }
 
-/* Badges — corporate slim */
-.badge-slim {
-    padding: 6px 14px;
-    border-radius: 50px;
-    font-size: 12px;
-    font-weight: 600;
-}
-.badge-open {
-    background: #e5f7ee;
-    color: #157a3c;
-}
-.badge-closed {
-    background: #ffeaea;
-    color: #b51f1f;
-}
-.badge-applied {
-    background: #e8ecff;
-    color: #2b3cbf;
-}
+    .premium-header {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #2b2d42;
+    }
 
-/* Apply button */
-.btn-apply {
-    background: #3b5bfd;
-    color: #fff;
-    border: none;
-    padding: 7px 18px;
-    border-radius: 50px;
-    font-size: 14px;
-    font-weight: 600;
-    transition: .25s ease;
-    box-shadow: 0 4px 12px rgba(59,91,253,.25);
-}
-.btn-apply:hover {
-    background: #2f4ae6;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(59,91,253,.35);
-}
+    .status-pill {
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    .pill-active { background: #d4f8e8; color: #1c7c54; }
+    .pill-closed { background: #fde2e4; color: #b4161b; }
+    .pill-applied { background: #e8e8ff; color: #3d45d7; }
+
+    .btn-premium {
+        background: #4b5bf1;
+        color: #fff;
+        border-radius: 10px;
+        transition: .25s;
+    }
+    .btn-premium:hover {
+        background: #3c4ad8;
+    }
 </style>
 
-<div class="container-fluid fade-up">
+<div class="container py-4">
 
-    <h2 class="mb-4 fw-bold" style="color:#1f2937;">Available Jobs</h2>
+    {{-- FILTER SECTION --}}
+    <div class="filter-box mb-4">
+        <form method="GET" action="">
+            <div class="row g-3 align-items-end">
 
-    <div class="job-card">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Search Job</label>
+                    <input type="text" name="search" class="form-control" value="{{ request('search') }}" placeholder="Search by title...">
+                </div>
 
-        {{-- Alerts --}}
-        @if(session('success')) <div class="alert alert-success">{{ session('success') }}</div> @endif
-        @if(session('warning')) <div class="alert alert-warning">{{ session('warning') }}</div> @endif
-        @if(session('error'))   <div class="alert alert-danger">{{ session('error') }}</div> @endif
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="">All</option>
+                        <option value="open" {{ request('status')=='open' ? 'selected' : '' }}>Active</option>
+                        <option value="closed" {{ request('status')=='closed' ? 'selected' : '' }}>Closed</option>
+                    </select>
+                </div>
 
-        <div class="table-responsive">
-            <table class="table table-p align-middle">
-                <thead>
-                    <tr>
-                        <th>Job Title</th>
-                        <th>Location</th>
-                        <th>Type</th>
-                        <th>Salary</th>
-                        <th>Status</th>
-                        <th class="text-center">Action</th>
-                    </tr>
-                </thead>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Sort By</label>
+                    <select name="sort" class="form-select">
+                        <option value="new" {{ request('sort')=='new'?'selected':'' }}>Newest First</option>
+                        <option value="old" {{ request('sort')=='old'?'selected':'' }}>Oldest First</option>
+                    </select>
+                </div>
 
-                <tbody>
-                @forelse($jobs as $job)
-                    <tr>
-                        <td class="fw-semibold text-dark">{{ $job->title }}</td>
-                        <td>{{ $job->location }}</td>
-                        <td>{{ ucfirst($job->job_type) }}</td>
+                <div class="col-md-2">
+                    <button class="btn btn-premium w-100">Filter</button>
+                </div>
+            </div>
+        </form>
+    </div>
 
-                        <td class="fw-bold text-primary">
-                            ₹{{ number_format($job->salary_min) }} - ₹{{ number_format($job->salary_max) }}
-                        </td>
+    {{-- JOB LISTINGS --}}
+    @forelse($jobs as $job)
 
-                        <td>
-                            @if($job->status == 'open')
-                                <span class="badge-slim badge-open">Open</span>
-                            @elseif($job->status == 'closed')
-                                <span class="badge-slim badge-closed">Closed</span>
-                            @endif
-                        </td>
+        @php
+            $employee = auth()->user()->employee ?? null;
 
-                        <td class="text-center">
+            $applied = $employee ? 
+                \App\Models\JobApplication::where('job_id',$job->id)
+                    ->where('employee_id',$employee->id)
+                    ->exists()
+                : false;
+        @endphp
 
-                            @php
-                                $employee = auth()->user()->employee ?? null;
-                                $applied = $employee ?
-                                    \App\Models\JobApplication::where('job_id',$job->id)
-                                        ->where('employee_id',$employee->id)
-                                        ->exists()
-                                    : false;
-                            @endphp
+        <!-- JOB CARD -->
+        <div class="premium-card p-3 mb-3">
+            <div class="d-flex justify-content-between">
 
-                            @if($job->status === 'closed')
-                                <span class="badge-slim badge-closed">Closed</span>
+                <div>
+                    <h5 class="premium-header mb-1">{{ $job->title }}</h5>
+                    <small class="text-muted">
+                        {{ $job->location }} • ₹{{ number_format($job->salary_min) }} - ₹{{ number_format($job->salary_max) }}
+                    </small>
+                </div>
 
-                            @elseif($applied)
-                                <span class="badge-slim badge-applied">Applied</span>
+                <div>
+                    @if($job->status === 'open')
+                        <span class="status-pill pill-active">Active</span>
+                    @else
+                        <span class="status-pill pill-closed">Closed</span>
+                    @endif
+                </div>
+            </div>
 
-                            @else
-                                <a href="{{ route('employee.jobs.showApplyForm', $job->id) }}"
-                                   class="btn-apply btn-sm">
-                                    Apply
-                                </a>
-                            @endif
+            <div class="mt-3 d-flex gap-2">
 
-                        </td>
-                    </tr>
+                <!-- VIEW DETAILS POPUP -->
+                <button 
+                    class="btn btn-outline-primary btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#jobModal{{ $job->id }}">
+                    View Details
+                </button>
 
-                @empty
-                    <tr>
-                        <td colspan="6" class="text-center text-muted py-4">No jobs found.</td>
-                    </tr>
-                @endforelse
-                </tbody>
+                @if($job->status === 'closed')
+                    <span class="status-pill pill-closed">Closed</span>
 
-            </table>
+                @elseif($applied)
+                    <span class="status-pill pill-applied">Applied</span>
+
+                @else
+                    <a href="{{ route('employee.jobs.showApplyForm', $job->id) }}" 
+                       class="btn btn-premium btn-sm">
+                       Apply
+                    </a>
+                @endif
+
+            </div>
         </div>
 
-    </div>
+        <!-- POPUP MODAL -->
+        <div class="modal fade" id="jobModal{{ $job->id }}" tabindex="-1">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content rounded-4 shadow-lg">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold">{{ $job->title }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <p><strong>Location:</strong> {{ $job->location }}</p>
+                        <p><strong>Salary:</strong> ₹{{ number_format($job->salary_min) }} - ₹{{ number_format($job->salary_max) }}</p>
+
+                        <p><strong>Experience Required:</strong> {{ $job->experience ?? 'Not Specified' }}</p>
+                        <p><strong>Job Type:</strong> {{ ucfirst($job->job_type ?? 'Not Mentioned') }}</p>
+                        <p><strong>Education:</strong> {{ $job->education ?? 'Not Specified' }}</p>
+
+                        @if($job->skills)
+                        <p><strong>Skills Required:</strong></p>
+                        @foreach(explode(',', $job->skills) as $skill)
+                            <span class="badge bg-light text-dark border px-3 py-2 rounded-pill me-1 mb-1">
+                                {{ trim($skill) }}
+                            </span>
+                        @endforeach
+                        <br><br>
+                        @endif
+
+                        <p><strong>Description:</strong></p>
+                        <p class="text-muted" style="line-height:1.6;">
+                            {!! nl2br(e($job->description)) !!}
+                        </p>
+
+                    </div>
+
+                    <div class="modal-footer">
+
+                        @if($job->status === 'closed')
+                            <span class="status-pill pill-closed">Closed</span>
+
+                        @elseif($applied)
+                            <span class="status-pill pill-applied">Already Applied</span>
+
+                        @else
+                            <a href="{{ route('employee.jobs.showApplyForm', $job->id) }}" 
+                               class="btn btn-premium px-4">
+                                Apply Now
+                            </a>
+                        @endif
+
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    @empty
+        <div class="text-center text-muted py-5">No jobs found.</div>
+    @endforelse
 
 </div>
 

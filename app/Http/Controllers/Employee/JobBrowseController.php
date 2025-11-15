@@ -10,12 +10,32 @@ use App\Models\Employee;
 
 class JobBrowseController extends Controller
 {
-    public function index()
-    {
-        // show jobs (remove is_approved if you don't have that column)
-        $jobs = JobListing::latest()->get();
-        return view('employee.jobs.index', compact('jobs'));
+    public function index(Request $request)
+{
+    $jobs = JobListing::query();
+
+    // 🔍 Search by title
+    if ($request->filled('search')) {
+        $jobs->where('title', 'LIKE', '%' . $request->search . '%');
     }
+
+    // ✅ Filter by status
+    if ($request->filled('status')) {
+        $jobs->where('status', $request->status);
+    }
+
+    // 🔽 Sort
+    if ($request->sort == 'old') {
+        $jobs->oldest();
+    } else {
+        $jobs->latest(); // default newest
+    }
+
+    $jobs = $jobs->get();
+
+    return view('employee.jobs.index', compact('jobs'));
+}
+
     
 
     // show the apply form

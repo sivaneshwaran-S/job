@@ -20,11 +20,19 @@ class DashboardController extends Controller
             'jobs' => 0,
             'applications' => 0,
 
-            // New sections (default empty)
             'latestJobs' => [],
             'latestEmployers' => [],
             'latestEmployees' => [],
             'jobStats' => [],
+
+            // Employer chart data
+            'applicationsPerJob' => [],
+            'dailyApplications' => [],
+            'jobStatusCount' => [],
+
+            // Employee chart data
+            'employeeDailyApplications' => [],
+            'applicationStatus' => [],
         ];
 
         // -----------------------------
@@ -36,14 +44,11 @@ class DashboardController extends Controller
             $data['employees'] = Employee::count();
             $data['jobs'] = JobListing::count();
 
-            
-
-            // Fetch last 5 recent entries
             $data['latestJobs'] = JobListing::latest()->limit(5)->get();
             $data['latestEmployers'] = Employer::latest()->limit(5)->get();
             $data['latestEmployees'] = Employee::latest()->limit(5)->get();
 
-            // Fetch job posting stats for last 7 days
+            // Jobs posted in last 7 days
             $data['jobStats'] = JobListing::whereDate('created_at', '>=', now()->subDays(7))
                 ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
                 ->groupBy('date')
@@ -55,20 +60,79 @@ class DashboardController extends Controller
         //      EMPLOYER SECTION
         // -----------------------------
         elseif ($user->role === 'employer') {
-            $employer = Employer::where('user_id', $user->id)->first();
-            $data['jobs'] = $employer
-                ? JobListing::where('employer_id', $employer->id)->count()
-                : 0;
-        }
+
+    $employer = Employer::where('user_id', $user->id)->first();
+
+    if (!$employer) {
+        // Prevent errors
+        return view('dashboard', [
+            'user' => $user,
+            'data' => $data
+        ]);
+    }
+
+    // Total jobs posted
+    $data['jobs'] = JobListing::where('employer_id', $employer->id)->count();
+
+    // Latest 5 jobs
+    $data['latestJobs'] = JobListing::where('employer_id', $employer->id)
+        ->latest()
+        ->limit(5)
+        ->get();
+
+    // Jobs posted per day (last 7 days)
+    $data['jobStats'] = JobListing::where('employer_id', $employer->id)
+        ->whereDate('created_at', '>=', now()->subDays(7))
+        ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
+        ->groupBy('date')
+        ->orderBy('date')
+        ->pluck('total', 'date');
+
+    // Applications received per job
+    $data['applicationsPerJob'] = JobListing::where('employer_id', $employer->id)
+        ->withCount('applications')
+        ->get(['title', 'applications_count']);
+
+    // Daily applications received
+    $data['dailyApplications'] = JobApplication::whereHas('jobListing', function ($q) use ($employer) {
+        $q->where('employer_id', $employer->id);
+    })
+        ->whereDate('created_at', '>=', now()->subDays(7))
+        ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
+        ->groupBy('date')
+        ->orderBy('date')
+        ->pluck('total', 'date');
+
+    // Job status count
+    $data['jobStatusCount'] = JobListing::where('employer_id', $employer->id)
+        ->selectRaw('status, COUNT(*) as total')
+        ->groupBy('status')
+        ->pluck('total', 'status');
+}
+
 
         // -----------------------------
         //      EMPLOYEE SECTION
         // -----------------------------
         elseif ($user->role === 'employee') {
+
             $employee = Employee::where('user_id', $user->id)->first();
-            $data['appliedJobs'] = $employee
-                ? JobApplication::where('employee_id', $employee->id)->count()
-                : 0;
+
+            $data['appliedJobs'] = JobApplication::where('employee_id', $employee->id)->count();
+
+            // Applications per day (last 7 days)
+            $data['employeeDailyApplications'] = JobApplication::where('employee_id', $employee->id)
+                ->whereDate('created_at', '>=', now()->subDays(7))
+                ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
+                ->groupBy('date')
+                ->orderBy('date')
+                ->pluck('total', 'date');
+
+            // Count by status (applied, shortlisted, rejected, hired)
+            $data['applicationStatus'] = JobApplication::where('employee_id', $employee->id)
+                ->selectRaw('status, COUNT(*) as total')
+                ->groupBy('status')
+                ->pluck('total', 'status');
         }
 
         return view('dashboard', compact('user', 'data'));

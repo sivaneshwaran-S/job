@@ -3,70 +3,99 @@
 @section('content')
 
 <style>
-    /* Light/Dark mode adaptive variables */
+    /* ------------------------------------------
+       MATCHED EXACTLY TO YOUR SIDEBAR COLORS
+    ------------------------------------------ */
     :root {
-        --card-bg: #ffffff;
-        --card-text: #1c1c1c;
-        --table-header-bg: #3f51b5;
-        --table-header-text: #ffffff;
-        --row-hover-bg: rgba(63, 81, 181, 0.10);
-        --button-bg: #5c6bc0;
-        --button-text: #ffffff;
+        --navy-dark: #222e3c;       /* Sidebar BG */
+        --primary-blue: #60a0ffff;    /* Sidebar active blue */
+        --primary-blue-dark: #0b5ed7;
+        --soft-bg: #f5f7fa;
+        --border-light: #d7dce3;
+        --text-main: #1e1e1e;
     }
 
-    html.dark :root {
-        --card-bg: #1e1e2f;
-        --card-text: #f0f0f7;
-        --table-header-bg: #283593;
-        --table-header-text: #ffffff;
-        --row-hover-bg: rgba(92, 107, 192, 0.25);
-        --button-bg: #7986cb;
-        --button-text: #ffffff;
-    }
-
+    /* ------------------------------------------
+       PREMIUM CARD
+    ------------------------------------------ */
     .premium-card {
-        background: var(--card-bg);
-        color: var(--card-text);
-        border-radius: 20px;
-        padding: 30px;
-        border: 1px solid rgba(255,255,255,0.12);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        background: white;
+        border-radius: 18px;
+        padding: 32px;
+        border: 1px solid var(--border-light);
+        box-shadow: 0px 14px 38px rgba(0, 0, 0, 0.08);
+        animation: fadeUp 0.5s ease;
+    }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to   { opacity: 1; transform: translateY(0); }
     }
 
     .premium-title {
-        font-size: 1.6rem;
-        font-weight: 900;
-        color: var(--table-header-bg);
+        font-size: 1.55rem;
+        font-weight: 800;
+        color: var(--navy-dark);
+        display: flex;
+        align-items: center;
+    }
+
+    .premium-title i {
+        color: var(--primary-blue);
+        font-size: 1.5rem;
+    }
+
+    /* ------------------------------------------
+       PREMIUM TABLE
+    ------------------------------------------ */
+    .premium-table {
+        border-radius: 14px !important;
+        overflow: hidden;
     }
 
     .premium-table thead {
-        background: var(--table-header-bg);
-        color: var(--table-header-text);
+        background: var(--navy-dark);
+        color: white;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+
+    .premium-table tbody tr {
+        transition: 0.25s ease;
     }
 
     .premium-table tbody tr:hover {
-        background: var(--row-hover-bg);
-        cursor: pointer;
+        background: #e9f2ff;
+        transform: translateX(4px);
     }
 
-    th{
-        color:white;
-    }
+    /* ------------------------------------------
+       BUTTON UPGRADE - MATCH SIDEBAR BLUE
+    ------------------------------------------ */
     .resume-btn {
-        background: var(--button-bg) !important;
-        color: var(--button-text) !important;
-        padding: 7px 16px;
-        font-size: 0.85rem;
-        border-radius: 6px;
+        background: var(--primary-blue);
+        color: #fff !important;
+        padding: 6px 16px;
+        border-radius: 8px;
+        font-size: 0.83rem;
+        font-weight: 500;
         border: none;
-        transition: .3s ease-in-out;
+        transition: 0.3s ease;
+        display: inline-flex;
+        align-items: center;
     }
 
     .resume-btn:hover {
+        background: var(--primary-blue-dark);
         transform: translateY(-2px);
-        opacity: 0.95;
     }
+
+    .resume-btn:active {
+        transform: scale(0.96);
+    }
+
 </style>
+
 
 <div class="premium-card">
     <h2 class="premium-title mb-4">
@@ -74,16 +103,17 @@
     </h2>
 
     @if(session('success'))
-        <div class="alert alert-success">
+        <div class="alert alert-success rounded-3">
             <i class="bi bi-check-circle me-1"></i> {{ session('success') }}
         </div>
     @endif
 
+
     <div class="table-responsive">
-        <table class="table premium-table table-bordered table-hover align-middle">
+        <table class="table premium-table table-hover align-middle">
             <thead>
                 <tr>
-                    <th  class="text-white">Job Title</th>
+                    <th class="text-white">Job Title</th>
                     <th class="text-white">Applicant Name</th>
                     <th class="text-white">Email</th>
                     <th class="text-white">Qualification</th>
@@ -104,7 +134,8 @@
                             <a href="{{ asset('storage/' . $app->employee->resume_file) }}"
                                target="_blank"
                                class="resume-btn">
-                                <i class="bi bi-file-earmark-text me-1"></i> View Resume
+                                <i class="bi bi-file-earmark-text me-1"></i>
+                                View Resume
                             </a>
                         @else
                             <span class="text-danger fw-semibold">No Resume</span>

@@ -5,159 +5,202 @@
 @section('content')
 
 <style>
-
-    /* -------------------------
-       PREMIUM GLOBAL LOOK
-    -------------------------- */
+    /* ----------------------------------------------------
+       PREMIUM COLOR SYSTEM
+    ----------------------------------------------------- */
 
     :root {
-        --primary: #3B82F6;
-        --primary-light: #E8F1FF;
-        --card-bg: #ffffff;
-        --soft-shadow: 0 4px 20px rgba(0,0,0,0.07);
-        --soft-border: 1px solid #E2E8F0;
+        --primary: #4b7bec;
+        --primary-dark: #91b2fdff;
+        --primary-soft: #e6eeff;
+
+        --success: #10B981;
+        --success-soft: #D1FAE5;
+
+        --warning: #FBBF24;
+        --warning-soft: #FFF7D6;
+
+        --danger: #EF4444;
+        --danger-soft: #FFE2E2;
+
+        --text-dark: #1f2937;
+        --text-muted: #6b7280;
+
+        --card-bg: rgba(255, 255, 255, 0.82);
+        --glass-border: 1px solid rgba(255, 255, 255, 0.45);
+        --glass-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
     }
 
-    /* PAGE HEADER */
+    /* ----------------------------------------------------
+       HEADER SECTION
+    ----------------------------------------------------- */
+
     .premium-header {
-        background: linear-gradient(135deg, #86b4ffff, #7f9dffff);
-        padding: 34px 30px;
-        border-radius: 20px;
+        background: linear-gradient(135deg, #1a2a3c, #2e4053);
+        padding: 32px 34px;
+        border-radius: 22px;
+        box-shadow: 0 10px 35px rgba(0,0,0,0.15);
         color: white;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        margin-bottom: 30px;
+        margin-bottom: 32px;
+        border: 1px solid rgba(255,255,255,0.15);
     }
 
     .premium-header h2 {
-        font-size: 28px;
         font-weight: 800;
+        letter-spacing: .4px;
+        margin-bottom: 8px;
     }
 
 
-    /* CARDS */
-    .premium-card {
+    /* ----------------------------------------------------
+       GLASS CARD
+    ----------------------------------------------------- */
+
+    .glass-card {
         background: var(--card-bg);
-        border-radius: 18px;
-        padding: 28px;
-        border: var(--soft-border);
-        box-shadow: var(--soft-shadow);
-        margin-bottom: 25px;
+        backdrop-filter: blur(16px);
+        border-radius: 22px;
+        padding: 30px;
+        border: var(--glass-border);
+        box-shadow: var(--glass-shadow);
+        margin-bottom: 28px;
     }
 
 
-    /* TABLE */
+    /* ----------------------------------------------------
+       TABLE DESIGN
+    ----------------------------------------------------- */
+
     .premium-table thead tr {
-        background: var(--primary-light);
-        color: #1e293b;
+        background: var(--primary-soft);
+        color: var(--text-dark);
+        font-weight: 600;
     }
 
     .premium-table tbody tr {
-        transition: 0.25s ease;
+        transition: .25s ease;
     }
 
     .premium-table tbody tr:hover {
-        background: #F8FAFC;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+        background: rgba(56,103,214,0.06);
         transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.06);
     }
 
 
-    /* AVATAR */
+    /* ----------------------------------------------------
+       AVATAR
+    ----------------------------------------------------- */
+
     .avatar {
-        width: 42px;
-        height: 42px;
+        width: 45px;
+        height: 45px;
         border-radius: 50%;
         object-fit: cover;
-        margin-right: 10px;
-        border: 2px solid #e5e7eb;
+        border: 2px solid rgba(0,0,0,0.08);
+        margin-right: 12px;
     }
 
 
-    /* SKILL TAGS */
+    /* ----------------------------------------------------
+       SKILL TAGS
+    ----------------------------------------------------- */
+
     .skill-tag {
-        background: #EEF2FF;
-        color: #4338CA;
+        background: #eef2ff;
+        color: #4338ca;
         padding: 4px 12px;
-        font-size: 11px;
-        border-radius: 30px;
-        margin: 2px;
-        display: inline-block;
-        font-weight: 600;
-    }
-
-
-    /* STATUS BADGES */
-    .status-badge {
-        padding: 6px 14px;
         border-radius: 20px;
         font-size: 12px;
         font-weight: 600;
+        display: inline-block;
+        margin: 2px;
     }
 
-    .status-pending { background: #FFF2CC; color: #9A6B00; }
-    .status-approved { background: #C8F8DE; color: #065F46; }
-    .status-rejected { background: #E2E8F0; color: #475569; }
 
+    /* ----------------------------------------------------
+       STATUS BADGES
+    ----------------------------------------------------- */
 
-    /* DROPDOWN BUTTON */
-    .dropdown-custom {
-        border-radius: 12px;
-        background: #EDF3FF;
-        padding: 6px 15px;
-        font-weight: 600;
-        border: none;
-        color: #3B4F75;
+    .badge-status {
+        padding: 6px 14px;
+        border-radius: 18px;
+        font-size: 12px;
+        font-weight: 700;
     }
 
-    /* PREMIUM BUTTON */
+    .pending { background: var(--warning-soft); color: #8a5c00; }
+    .approved { background: var(--success-soft); color: #065f46; }
+    .rejected { background: var(--danger-soft); color: #b91c1c; }
+
+
+    /* ----------------------------------------------------
+       BUTTONS
+    ----------------------------------------------------- */
+
     .btn-premium {
-        border-radius: 12px;
-        padding: 7px 15px;
+        border-radius: 40px !important;
+        padding: 7px 18px !important;
         font-weight: 600;
-        border: none;
-        transition: 0.25s;
+        transition: .25s ease;
     }
 
-    .btn-view { background: #3B82F6; color: white; }
-    .btn-view:hover { background: #1D4ED8; }
+    .btn-premium:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
 
-    .btn-approve { background: #10B981; color: white; }
+    .btn-view {
+    white-space: nowrap !important;   /* Prevents text from breaking */
+    border-radius: 12px !important;   /* Ensures rounded corners */
+    padding: 8px 16px !important;     /* Makes button taller and premium */
+    display: inline-block !important;
+}
+
+    .btn-view:hover { background: var(--primary-dark); }
+
+    .btn-approve { background: var(--success); color: white; }
     .btn-approve:hover { background: #059669; }
 
-    .btn-secondary { background: #CBD5E1; color: #334155; }
+    .btn-disabled { background: #d6d9df; color: #6b7280; }
 
-    /* MODAL */
+
+    /* ----------------------------------------------------
+       MODAL
+    ----------------------------------------------------- */
+
     .modal-content {
-        border-radius: 14px;
-        padding: 20px;
+        border-radius: 18px;
+        padding: 25px;
+        border: none;
     }
 
 </style>
-
 
 <div class="container-fluid">
 
     <!-- HEADER -->
     <div class="premium-header">
-        <h2>Applicants for: {{ $job->title }}</h2>
-        <p class="mb-0">Review applicant details, resumes, and take action.</p>
+        <h2 class="text-white">Applicants for: {{ $job->title }}</h2>
+        <p class="opacity-75 mb-0">Review applicants, check resumes, approve or reject.</p>
     </div>
 
 
-    <!-- JOB INFO -->
-    <div class="premium-card">
-        <h5 class="fw-bold mb-3" style="color:#3B82F6;">Job Information</h5>
+    <!-- JOB INFO CARD -->
+    <div class="glass-card">
+        <h5 class="fw-bold mb-4 text-primary">Job Information</h5>
 
-        <div class="row">
+        <div class="row mb-2">
             <div class="col-md-4"><strong>Company:</strong> {{ $job->employer->company_name ?? 'N/A' }}</div>
             <div class="col-md-4"><strong>Location:</strong> {{ $job->location }}</div>
+            <div class="col-md-4"><strong>Salary:</strong> ₹{{ $job->salary_min }} - ₹{{ $job->salary_max }}</div>
         </div>
     </div>
 
 
-    <!-- APPLICANT TABLE -->
-    <div class="premium-card">
-        <h5 class="fw-bold mb-3" style="color:#3B82F6;">Applicants List</h5>
+    <!-- APPLICANTS TABLE -->
+    <div class="glass-card">
+        <h5 class="fw-bold mb-4 text-primary">Applicants List</h5>
 
         <div class="table-responsive">
             <table class="table premium-table align-middle">
@@ -177,11 +220,13 @@
                     @forelse ($job->applications as $application)
                         @php
                             $skills = explode(',', $application->employee->skills ?? '');
-                            $avatar = "https://ui-avatars.com/api/?name=" . urlencode($application->employee->user->name) . "&background=3B82F6&color=fff";
+                            $avatar = "https://ui-avatars.com/api/?name="
+                                        . urlencode($application->employee->user->name)
+                                        . "&background=4b7bec&color=fff";
                         @endphp
 
                         <tr>
-                            <!-- APPLICANT WITH AVATAR -->
+                            <!-- APPLICANT -->
                             <td>
                                 <div class="d-flex align-items-center">
                                     <img src="{{ $avatar }}" class="avatar">
@@ -190,76 +235,68 @@
                             </td>
 
                             <td>{{ $application->employee->user->email }}</td>
-                            <td>{{ $application->employee->experience_years ?? '-' }} yrs</td>
+
+                            <td>{{ $application->employee->experience_years ?? '0' }} yrs</td>
 
                             <!-- SKILLS -->
                             <td>
                                 @foreach ($skills as $skill)
-                                    @if(trim($skill) != '')
+                                    @if(trim($skill) !== '')
                                         <span class="skill-tag">{{ trim($skill) }}</span>
                                     @endif
                                 @endforeach
                             </td>
 
-                            <!-- STATUS -->
+                            <!-- STATUS BADGE -->
                             <td>
-                                <span class="status-badge
-                                    @if($application->status == 'pending') status-pending
-                                    @elseif($application->status == 'approved') status-approved
-                                    @else status-rejected
+                                <span class="badge-status
+                                    @if($application->status == 'pending') pending
+                                    @elseif($application->status == 'approved') approved
+                                    @else rejected
                                     @endif">
                                     {{ ucfirst($application->status) }}
                                 </span>
                             </td>
 
-                            <!-- RESUME MODAL -->
+                            <!-- RESUME -->
                             <td>
-                                @if($application->employee->resume_file)
-                                    <button class="btn-premium btn-view" data-bs-toggle="modal"
-                                            data-bs-target="#resumeModal{{ $application->id }}">
-                                        Preview
-                                    </button>
-                                @else
-                                    <span class="text-danger fw-semibold">No Resume</span>
-                                @endif
-                            </td>
+    @if($application->employee->resume_file)
+        <a href="{{ asset('storage/' . $application->employee->resume_file) }}" 
+           target="_blank" 
+           class="btn-premium btn-view">
+           View Resume
+        </a>
+    @else
+        <span class="text-danger fw-semibold">No Resume</span>
+    @endif
+</td>
 
-                            <!-- ACTIONS DROPDOWN -->
+
+                            <!-- ACTION -->
                             <td>
-                                @if($application->status == 'pending')
+                                @if($application->status === 'pending')
                                     <form method="POST"
-                                          action="{{ route('admin.applicants.approve', $application->id) }}"
-                                          onsubmit="return confirm('Approve applicant?');">
+                                          action="{{ route('admin.applicants.approve', $application->id) }}">
                                         @csrf
                                         <button class="btn-premium btn-approve">Approve</button>
                                     </form>
                                 @else
-                                    <button class="btn-premium btn-secondary" disabled>Approved</button>
+                                    <button class="btn-premium btn-disabled" disabled>Approved</button>
                                 @endif
                             </td>
 
                         </tr>
 
-                        <!-- RESUME PREVIEW MODAL -->
-                        <div class="modal fade" id="resumeModal{{ $application->id }}" tabindex="-1">
-                            <div class="modal-dialog modal-xl">
-                                <div class="modal-content">
-                                    <h5 class="fw-bold mb-3">Resume Preview</h5>
-                                    <embed src="{{ asset('storage/' . $application->employee->resume_file) }}"
-                                           type="application/pdf"
-                                           width="100%" height="600px" />
-                                </div>
-                            </div>
-                        </div>
-
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center text-muted py-4">No applicants yet.</td>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                <i class="bi bi-exclamation-circle fs-4 d-block"></i>
+                                No applicants yet.
+                            </td>
                         </tr>
                     @endforelse
 
                 </tbody>
-
             </table>
         </div>
     </div>

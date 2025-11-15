@@ -377,5 +377,136 @@
     })();
     @endif
 </script>
+<script>
+Chart.defaults.font.family = "Poppins, sans-serif";
+Chart.defaults.color = "#334155";
+</script>
+{{-- ---------------------------------------------------------
+     EMPLOYER CHARTS (FIXED, RESPONSIVE, SHARP)
+---------------------------------------------------------- --}}
+@if($user->role === 'employer')
+
+<style>
+    .chart-box {
+        background: white;
+        border-radius: 14px;
+        padding: 18px;
+        margin-top: 25px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+        flex: 1 1 calc(50% - 20px);
+    min-width: 300px;
+    width: 100%;
+    }
+
+
+    canvas {
+        width: 100% !important;
+        max-height: 240px !important;
+    }
+</style>
+
+<script>
+    Chart.defaults.font.family = "Poppins";
+    Chart.defaults.color = "#334155";
+    Chart.defaults.devicePixelRatio = 2; // sharp charts
+</script>
+
+
+{{-- ---------------------------
+     Applications Per Job
+---------------------------- --}}
+<div class="chart-box">
+    <h4 class="font-semibold mb-2">Applications Per Job</h4>
+    <canvas id="applicationsPerJobChart" height="200"></canvas>
+</div>
+
+<script>
+    new Chart(document.getElementById('applicationsPerJobChart'), {
+        type: 'bar',
+        data: {
+            labels: {!! json_encode($data['applicationsPerJob']->pluck('title')) !!},
+            datasets: [{
+                label: "Applications",
+                data: {!! json_encode($data['applicationsPerJob']->pluck('applications_count')) !!},
+                backgroundColor: "#4a6bff",
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } }
+        }
+    });
+</script>
+
+
+
+{{-- ---------------------------
+     Daily Applications
+---------------------------- --}}
+<div class="chart-box">
+    <h4 class="font-semibold mb-2">Daily Applications (Last 7 Days)</h4>
+    <canvas id="dailyApplicationsChart" height="200"></canvas>
+</div>
+
+<script>
+    new Chart(document.getElementById('dailyApplicationsChart'), {
+        type: 'line',
+        data: {
+            labels: {!! json_encode($data['dailyApplications']->keys()) !!},
+            datasets: [{
+                label: "Daily Applications",
+                data: {!! json_encode($data['dailyApplications']->values()) !!},
+                borderColor: "#21c77a",
+                backgroundColor: "rgba(33,199,122,0.2)",
+                tension: 0.4,
+                fill: true,
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: true } },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+</script>
+
+
+{{-- ---------------------------
+     Job Status (Active / Closed / Draft)
+---------------------------- --}}
+<div class="chart-box">
+    <h4 class="font-semibold mb-2">Job Status Overview</h4>
+    <canvas id="jobStatusChart" height="200"></canvas>
+</div>
+
+<script>
+    new Chart(document.getElementById('jobStatusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: {!! json_encode($data['jobStatusCount']->keys()) !!},
+            datasets: [{
+                data: {!! json_encode($data['jobStatusCount']->values()) !!},
+                backgroundColor: ["#4a6bff", "#21c77a", "#f6b041"]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { 
+                legend: { 
+                    position: 'bottom',
+                    labels: { boxWidth: 14 }
+                }
+            }
+        }
+    });
+</script>
+
+@endif
+
 
 @endsection
