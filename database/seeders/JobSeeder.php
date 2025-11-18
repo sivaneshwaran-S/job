@@ -3,16 +3,16 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\JobListing;
+use App\Models\Job;
 use App\Models\Employer;
 
-class JobListingSeeder extends Seeder
+class JobSeeder extends Seeder
 {
     public function run(): void
     {
         $employer = Employer::first();
 
-        JobListing::create([
+        Job::create([
             'employer_id' => $employer->id,
             'title' => 'Frontend Developer',
             'description' => 'Looking for a frontend developer proficient in React and Tailwind CSS.',

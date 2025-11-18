@@ -11,12 +11,13 @@ return new class extends Migration
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->enum('gender', ['male', 'female', 'other'])->nullable();
             $table->date('dob')->nullable();
             $table->string('qualification', 150)->nullable();
             $table->integer('experience_years')->default(0);
             $table->text('skills')->nullable();
-            $table->string('resume_file', 255)->nullable();
+            $table->string('resume_file')->nullable();
             $table->string('preferred_location', 100)->nullable();
             $table->timestamps();
         });

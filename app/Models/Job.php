@@ -28,10 +28,8 @@ class Job extends Model
         return $this->belongsTo(Employer::class, 'employer_id');
     }
 
-    // ✅ Each job can have many applications
     public function applications()
     {
         return $this->hasMany(JobApplication::class, 'job_id');
     }
-
 }

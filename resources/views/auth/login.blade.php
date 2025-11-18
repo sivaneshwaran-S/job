@@ -7,12 +7,12 @@
 
         .login-container {
             max-width: 30%;
-            width:50%;
+            width: 50%;
             margin: 60px auto;
             padding: 40px 35px;
             background: #ffffff;
             border-radius: 15px;
-            box-shadow: 0 6px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
         }
 
         .login-title {
@@ -58,6 +58,9 @@
         @if (session('error'))
             <div class="alert alert-danger text-center">{{ session('error') }}</div>
         @endif
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
 
         <form method="POST" action="{{ route('login') }}">
             @csrf
@@ -65,9 +68,7 @@
             <!-- Email -->
             <div class="form-group">
                 <x-input-label for="email" :value="__('Email')" />
-                <x-text-input id="email" type="email" name="email"
-                    class="block mt-1 w-full"
-                    :value="old('email')"
+                <x-text-input id="email" type="email" name="email" class="block mt-1 w-full" :value="old('email')"
                     required autofocus autocomplete="username" />
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
             </div>
@@ -75,9 +76,8 @@
             <!-- Password -->
             <div class="form-group">
                 <x-input-label for="password" :value="__('Password')" />
-                <x-text-input id="password" type="password" name="password"
-                    class="block mt-1 w-full"
-                    required autocomplete="current-password" />
+                <x-text-input id="password" type="password" name="password" class="block mt-1 w-full" required
+                    autocomplete="current-password" />
                 <x-input-error :messages="$errors->get('password')" class="mt-2" />
             </div>
 
@@ -85,8 +85,7 @@
             <div class="form-group">
                 <label for="remember_me" class="inline-flex items-center">
                     <input id="remember_me" type="checkbox"
-                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
-                        name="remember">
+                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
                     <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
                 </label>
             </div>
@@ -94,17 +93,15 @@
             <!-- Actions -->
             <div class="action-row">
                 @if (Route::has('password.request'))
-                    <a class="underline text-sm text-gray-600 hover:text-gray-900"
-                        href="{{ route('password.request') }}">
+                    <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('password.request') }}">
                         Forgot password?
                     </a>
                 @endif
 
-                <button type="submit"
-    class="btn btn-primary w-auto px-6 py-2"
-    style="background:#4e73df; border-radius:8px;color:white; border:none;">
-    Log in
-</button>
+                <button type="submit" class="btn btn-primary w-auto px-6 py-2"
+                    style="background:#4e73df; border-radius:8px;color:white; border:none;">
+                    Log in
+                </button>
 
             </div>
 

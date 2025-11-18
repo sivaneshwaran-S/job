@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Employer;
 use App\Models\Employee;
-use App\Models\JobListing;
+use App\Models\Job;
 use App\Models\JobApplication;
 
 class DashboardController extends Controller
@@ -42,14 +42,14 @@ class DashboardController extends Controller
 
             $data['employers'] = Employer::count();
             $data['employees'] = Employee::count();
-            $data['jobs'] = JobListing::count();
+            $data['jobs'] = Job::count();
 
-            $data['latestJobs'] = JobListing::latest()->limit(5)->get();
+            $data['latestJobs'] = Job::latest()->limit(5)->get();
             $data['latestEmployers'] = Employer::latest()->limit(5)->get();
             $data['latestEmployees'] = Employee::latest()->limit(5)->get();
 
             // Jobs posted in last 7 days
-            $data['jobStats'] = JobListing::whereDate('created_at', '>=', now()->subDays(7))
+            $data['jobStats'] = Job::whereDate('created_at', '>=', now()->subDays(7))
                 ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
                 ->groupBy('date')
                 ->orderBy('date')
@@ -72,16 +72,16 @@ class DashboardController extends Controller
     }
 
     // Total jobs posted
-    $data['jobs'] = JobListing::where('employer_id', $employer->id)->count();
+    $data['jobs'] = Job::where('employer_id', $employer->id)->count();
 
     // Latest 5 jobs
-    $data['latestJobs'] = JobListing::where('employer_id', $employer->id)
+    $data['latestJobs'] = Job::where('employer_id', $employer->id)
         ->latest()
         ->limit(5)
         ->get();
 
     // Jobs posted per day (last 7 days)
-    $data['jobStats'] = JobListing::where('employer_id', $employer->id)
+    $data['jobStats'] = Job::where('employer_id', $employer->id)
         ->whereDate('created_at', '>=', now()->subDays(7))
         ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
         ->groupBy('date')
@@ -89,7 +89,7 @@ class DashboardController extends Controller
         ->pluck('total', 'date');
 
     // Applications received per job
-    $data['applicationsPerJob'] = JobListing::where('employer_id', $employer->id)
+    $data['applicationsPerJob'] = Job::where('employer_id', $employer->id)
         ->withCount('applications')
         ->get(['title', 'applications_count']);
 
@@ -104,7 +104,7 @@ class DashboardController extends Controller
         ->pluck('total', 'date');
 
     // Job status count
-    $data['jobStatusCount'] = JobListing::where('employer_id', $employer->id)
+    $data['jobStatusCount'] = Job::where('employer_id', $employer->id)
         ->selectRaw('status, COUNT(*) as total')
         ->groupBy('status')
         ->pluck('total', 'status');

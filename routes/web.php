@@ -1,6 +1,7 @@
 <?php
-
-use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;             
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\Employee\EmployeeProfileController;
@@ -10,15 +11,50 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Employee\JobBrowseController;
 
+
+Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
+
+    // Validate signed URL manually
+    if (! URL::hasValidSignature($request)) {
+        abort(403, 'Invalid or expired verification link.');
+    }
+
+    // Login the user without session conflict
+    Auth::loginUsingId($id);
+
+    // Mark email as verified
+    $request->user()->markEmailAsVerified();
+
+    Auth::logout(); // logout so they can login cleanly
+
+    return redirect('/login')->with('success', 'Email verified successfully. Please login now.');
+
+})->name('verification.verify');
+
 Route::get('/', fn() => view('welcome'));
 
-
 Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->name('dashboard');
 
-    
-    Route::post('/logout', function () {
+
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+
+
+
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+
+    return back()->with('status', 'verification-link-sent');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+
+
+Route::post('/logout', function () {
     Auth::logout();
     return redirect('/');
 })->name('logout');
@@ -77,8 +113,8 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/employee/resume/delete', [EmployeeProfileController::class, 'deleteResume'])
-     ->name('employee.resume.delete')
-     ->middleware('auth');
+    ->name('employee.resume.delete')
+    ->middleware('auth');
 
 
 require __DIR__ . '/auth.php';

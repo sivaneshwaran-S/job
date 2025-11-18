@@ -16,19 +16,17 @@
         box-shadow: 0 6px 25px rgba(0,0,0,0.1);
     }
 
-    /* RIGHT FORM — center everything */
     .register-container {
         width: 100%;
         padding: 40px 35px;
         display: flex;
-        align-items: center;       /* vertical centering */
-        justify-content: center;   /* horizontal centering of inner form box */
+        align-items: center;
+        justify-content: center;
     }
 
-    /* inner form box to control width of inputs */
     .register-form-box {
         width: 100%;
-        max-width: 480px; /* control input width so it's not edge-to-edge */
+        max-width: 480px;
     }
 
     .register-title {
@@ -58,12 +56,6 @@
         box-sizing: border-box;
     }
 
-    .form-control:focus {
-        border-color: #4e73df;
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(78,115,223,0.12);
-    }
-
     .btn-register {
         background: #4e73df;
         color: #fff;
@@ -77,58 +69,48 @@
     .btn-register:hover {
         background: #3b5fd3;
     }
-
-    .login-link {
-        text-align: center;
-        margin-top: 14px;
-        font-size: 14px;
-    }
-    .login-link a {
-        color: #4e73df;
-        font-weight: 600;
-    }
-
-    /* Responsive: stack and hide image on small screens */
-    @media (max-width: 900px) {
-        .register-img { display: none; }
-        .register-container { width: 100%; padding: 30px 20px; }
-        .register-wrapper { border-radius: 12px; max-width: 95%; }
-    }
 </style>
 
 <div class="register-wrapper">
-
-    <!-- LEFT IMAGE: replace path with your image in public/images/ -->
-    <div class="register-img" style="background-image: url('{{ asset('images/register-side.jpg') }}');"></div>
-
-    <!-- RIGHT FORM -->
     <div class="register-container">
         <div class="register-form-box">
             <div class="register-title">Create Account</div>
 
+            {{-- SUCCESS MESSAGE --}}
+            @if (session('status'))
+                <div style="color: green; text-align:center; margin-bottom:10px;">
+                    {{ session('status') }}
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('register') }}">
                 @csrf
 
+                {{-- FULL NAME --}}
                 <div class="form-group">
                     <label for="name">Full Name</label>
-                    <input id="name" type="text" class="form-control" name="name" required autofocus>
+                    <input id="name" type="text" class="form-control" name="name" required>
                 </div>
 
+                {{-- EMAIL --}}
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input id="email" type="email" class="form-control" name="email" required>
                 </div>
 
+                {{-- PHONE --}}
                 <div class="form-group">
                     <label for="phone">Phone Number</label>
                     <input id="phone" type="text" class="form-control" name="phone">
                 </div>
 
+                {{-- LOCATION --}}
                 <div class="form-group">
                     <label for="location">Location</label>
                     <input id="location" type="text" class="form-control" name="location">
                 </div>
 
+                {{-- ROLE --}}
                 <div class="form-group">
                     <label for="role">Register As</label>
                     <select id="role" class="form-control" name="role" required>
@@ -138,6 +120,7 @@
                     </select>
                 </div>
 
+                {{-- EMPLOYER EXTRA FIELDS --}}
                 <div id="employer_fields" style="display:none;">
                     <div class="form-group">
                         <label for="company_name">Company Name</label>
@@ -155,19 +138,24 @@
                     </div>
                 </div>
 
+                {{-- PASSWORD --}}
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input id="password" type="password" class="form-control" name="password" required>
                 </div>
 
+                {{-- CONFIRM PASSWORD --}}
                 <div class="form-group">
                     <label for="password_confirmation">Confirm Password</label>
                     <input id="password_confirmation" type="password" class="form-control" name="password_confirmation" required>
                 </div>
 
-                <button type="submit" class="btn-register">Register</button>
+                {{-- REGISTER BUTTON --}}
+                <button type="submit" class="btn-register">
+                    Register
+                </button>
 
-                <div class="login-link">
+                <div class="login-link" style="margin-top:10px; text-align:center;">
                     Already registered? <a href="{{ route('login') }}">Login</a>
                 </div>
             </form>
@@ -176,8 +164,8 @@
 </div>
 
 <script>
-    // toggle employer fields
-    document.getElementById('role').addEventListener('change', function() {
+    // Show employer fields on selection
+    document.getElementById('role').addEventListener('change', function () {
         document.getElementById('employer_fields').style.display =
             this.value === 'employer' ? 'block' : 'none';
     });

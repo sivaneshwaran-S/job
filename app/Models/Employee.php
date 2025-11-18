@@ -20,20 +20,13 @@ class Employee extends Model
         'preferred_location',
     ];
 
-public function user()
-{
-    return $this->belongsTo(User::class, 'user_id');
-}
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
-public function applications()
-{
-    return $this->hasMany(JobApplication::class, 'employee_id');
-}
-
-
-
-    // public function reviews()
-    // {
-    //     return $this->hasMany(Review::class);
-    // }
+    public function applications()
+    {
+        return $this->hasMany(JobApplication::class, 'employee_id');
+    }
 }

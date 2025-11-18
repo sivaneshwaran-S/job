@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Models\User;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -29,16 +30,30 @@ public function store(Request $request): RedirectResponse
         'password' => ['required'],
     ]);
 
-    $user = \App\Models\User::where('email', $request->email)->first();
+    $user = User::where('email', $request->email)->first();
 
-    if (!$user || !\Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
+    // ❌ User not found OR wrong password
+    if (!$user || !Hash::check($request->password, $user->password)) {
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ])->onlyInput('email');
     }
 
-    // 🚫 Block pending or rejected users
+    // ✅ ADMIN LOGIN → SKIP ALL CHECKS
+    if ($user->role === 'admin') {
+        Auth::login($user, $request->boolean('remember'));
+        $request->session()->regenerate();
+        return redirect()->route('dashboard');
+    }
+
+    // ❌ If not admin → must verify email first
+    if (!$user->hasVerifiedEmail()) {
+        return back()->with('error', 'Please verify your email before logging in.');
+    }
+
+    // ❌ Only employees/employers need admin approval
     if (in_array($user->role, ['employer', 'employee'])) {
+
         if ($user->status === 'pending') {
             return back()->with('error', '⚠️ Your account is pending admin approval.');
         }
@@ -48,11 +63,10 @@ public function store(Request $request): RedirectResponse
         }
     }
 
-    // ✅ Passed all checks — proceed with login
-    \Illuminate\Support\Facades\Auth::login($user, $request->boolean('remember'));
+    // ✅ If all checks passed → login success
+    Auth::login($user, $request->boolean('remember'));
     $request->session()->regenerate();
 
-    // 🎯 Redirect to the unified dashboard
     return redirect()->route('dashboard');
 }
 

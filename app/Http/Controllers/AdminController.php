@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\JobListing;
+use App\Models\Job;
 use App\Models\JobApplication;
 
 class AdminController extends Controller
@@ -20,7 +20,7 @@ class AdminController extends Controller
         ->where('status', 'approved')
         ->count();
 
-    $totalJobs = JobListing::count();
+    $totalJobs = Job::count();
 
     return view('admin.dashboard', [
         'employers' => $totalEmployers,
@@ -64,14 +64,14 @@ public function rejectUser($id)
     // 💼 All Jobs
     public function allJobs()
     {
-        $jobs = JobListing::with('employer')->latest()->get();
+        $jobs = Job::with('employer')->latest()->get();
         return view('admin.jobs.all', compact('jobs'));
     }
 
     // 👀 View Job Applicants
     public function viewApplicants($id)
     {
-       $job = JobListing::with(['employer', 'applications.employee'])->findOrFail($id);
+       $job = Job::with(['employer', 'applications.employee'])->findOrFail($id);
 
         return view('admin.jobs.applicants', compact('job'));
     }

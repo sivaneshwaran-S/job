@@ -9,6 +9,9 @@ class JobApplication extends Model
 {
     use HasFactory;
 
+    // ✔ MATCH REAL TABLE NAME
+    protected $table = 'applications';
+
     protected $fillable = [
         'job_id',
         'employee_id',
@@ -18,16 +21,11 @@ class JobApplication extends Model
 
     public function job()
     {
-        return $this->belongsTo(JobListing::class, 'job_id');
+        return $this->belongsTo(Job::class, 'job_id');
     }
 
     public function employee()
     {
         return $this->belongsTo(Employee::class, 'employee_id');
     }
-    public function jobListing()
-{
-    return $this->belongsTo(JobListing::class, 'job_id');
-}
-
 }

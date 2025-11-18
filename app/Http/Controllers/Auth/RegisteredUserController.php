@@ -33,7 +33,6 @@ class RegisteredUserController extends Controller
         'address' => ['nullable', 'string', 'max:255'],
     ]);
 
-    // 1️⃣ Create user with pending status
     $user = User::create([
         'name' => $request->name,
         'email' => $request->email,
@@ -41,10 +40,9 @@ class RegisteredUserController extends Controller
         'role' => $request->role,
         'phone' => $request->phone,
         'location' => $request->location,
-        'status' => 'pending', // 👈 fixed
+        'status' => 'pending',
     ]);
 
-    // 2️⃣ Related record
     if ($request->role === 'employer') {
         \App\Models\Employer::create([
             'user_id' => $user->id,
@@ -55,7 +53,7 @@ class RegisteredUserController extends Controller
             'gst_number' => null,
             'verified' => 0,
         ]);
-    } elseif ($request->role === 'employee') {
+    } else {
         \App\Models\Employee::create([
             'user_id' => $user->id,
             'gender' => null,
@@ -68,7 +66,6 @@ class RegisteredUserController extends Controller
         ]);
     }
 
-    // 3️⃣ Event + redirect
     event(new Registered($user));
 
     return redirect()->route('registration.pending');
